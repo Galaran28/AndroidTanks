@@ -1,15 +1,33 @@
-package g9.cs619_2015_project2.cs.unh.edu.g9_cs1097_aecook1;
+package edu.unh.cs.cs619_2015_project2.g9;
 
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity {
+import edu.unh.cs.cs619_2015_project2.g9.rest.BulletZoneRestClient;
+import edu.unh.cs.cs619_2015_project2.g9.util.LongWrapper;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.rest.RestService;
+
+@EActivity
+public class TankClientActivity extends AppCompatActivity {
+
+    private static final String TAG = "TankClientActivity";
+
+    @RestService
+    BulletZoneRestClient restClient;
+
+    private long tankId = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, String.valueOf(tankId), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
@@ -46,7 +64,24 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
+    }
+
+    @AfterViews
+    protected void afterViewInjection() {
+        joinAsync();
+        SystemClock.sleep(500);
+        //gridView.setAdapter(mGridAdapter);
+    }
+
+    @Background
+    void joinAsync() {
+        try {
+            tankId = restClient.join().getResult();
+            // gridPollTask.doPoll();
+            Log.d(TAG, "tankId is " + tankId);
+        } catch (Exception e) {
+
+        }
     }
 }
