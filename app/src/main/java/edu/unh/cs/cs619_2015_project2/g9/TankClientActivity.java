@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import edu.unh.cs.cs619_2015_project2.g9.rest.BulletZoneRestClient;
+import edu.unh.cs.cs619_2015_project2.g9.util.GridWrapper;
 import edu.unh.cs.cs619_2015_project2.g9.util.LongWrapper;
 
 import org.androidannotations.annotations.AfterViews;
