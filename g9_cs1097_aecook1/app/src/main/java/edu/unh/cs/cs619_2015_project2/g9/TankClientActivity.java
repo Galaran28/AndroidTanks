@@ -10,6 +10,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.GridView;
 
 import edu.unh.cs.cs619_2015_project2.g9.rest.BulletZoneRestClient;
 import edu.unh.cs.cs619_2015_project2.g9.util.GridWrapper;
@@ -29,6 +32,10 @@ public class TankClientActivity extends AppCompatActivity {
     BulletZoneRestClient restClient;
 
     private long tankId = -1;
+    private GridView gridview;
+    private int[][] grid;
+    private edu.unh.cs.cs619_2015_project2.g9.ImageAdapter imageAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +43,40 @@ public class TankClientActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+         gridview = (GridView) findViewById(R.id.gridview);
+       // imageAdapter = new edu.unh.cs.cs619_2015_project2.g9.ImageAdapter(this, grid);
+        imageAdapter = new edu.unh.cs.cs619_2015_project2.g9.ImageAdapter(this);
+        gridview.setAdapter(imageAdapter );
+
+        Button up = (Button) findViewById(R.id.up);
+        Button down = (Button) findViewById(R.id.down);
+        Button left = (Button) findViewById(R.id.left);
+        Button right = (Button) findViewById(R.id.right);
+
+        up.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            }
+        });
+
+        down.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            }
+        });
+
+        left.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            }
+        });
+
+        right.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            }
+        });
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -72,7 +113,8 @@ public class TankClientActivity extends AppCompatActivity {
     protected void afterViewInjection() {
         joinAsync();
         SystemClock.sleep(500);
-        //gridView.setAdapter(mGridAdapter);
+        //imageAdapter.updateGrid();
+       // gridview.setAdapter(imageAdapter );
     }
 
     @Background
