@@ -21,6 +21,7 @@ import edu.unh.cs.cs619_2015_project2.g9.util.LongWrapper;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
 
 @EActivity
@@ -28,14 +29,12 @@ public class TankClientActivity extends AppCompatActivity {
 
     private static final String TAG = "TankClientActivity";
 
-    @RestService
-    BulletZoneRestClient restClient;
 
-    private long tankId = -1;
-    private GridView gridview;
-    private int[][] grid;
+    private GameGrid game;
     private edu.unh.cs.cs619_2015_project2.g9.ImageAdapter imageAdapter;
 
+    @ViewById
+    protected GridView gridview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +43,6 @@ public class TankClientActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-         gridview = (GridView) findViewById(R.id.gridview);
        // imageAdapter = new edu.unh.cs.cs619_2015_project2.g9.ImageAdapter(this, grid);
         imageAdapter = new edu.unh.cs.cs619_2015_project2.g9.ImageAdapter(this);
         gridview.setAdapter(imageAdapter );
@@ -78,14 +76,14 @@ public class TankClientActivity extends AppCompatActivity {
             }
         });
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+/*        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, String.valueOf(tankId), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
-        });
+        });*/
     }
 
     @Override
@@ -111,20 +109,7 @@ public class TankClientActivity extends AppCompatActivity {
 
     @AfterViews
     protected void afterViewInjection() {
-        joinAsync();
+        game = new GameGrid(16, 16);
         SystemClock.sleep(500);
-        //imageAdapter.updateGrid();
-       // gridview.setAdapter(imageAdapter );
-    }
-
-    @Background
-    void joinAsync() {
-        try {
-            tankId = restClient.join().getResult();
-            // gridPollTask.doPoll();
-            Log.d(TAG, "tankId is " + tankId);
-        } catch (Exception e) {
-
-        }
     }
 }

@@ -1,0 +1,17 @@
+package edu.unh.cs.cs619_2015_project2.g9.tiles;
+
+/**
+ * Tile base class
+ *
+ * @Author Chris Sleys
+ */
+public class Tile {
+    public static final int TILE = 0;
+    public static final int WALL = 1;
+    public static final int BULLET = 2;
+    public static final int TANK = 3;
+
+    public int getType() {
+        return this.TILE;
+    }
+}
