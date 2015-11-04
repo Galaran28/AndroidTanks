@@ -11,6 +11,7 @@
 # Generated files
 bin/
 gen/
+.idea/
 
 # Gradle files
 .gradle/
@@ -26,11 +27,6 @@ proguard/
 # Log Files
 *.log
 
-# Intellij Excludes
-/.idea/workspace.xml
-/.idea/libraries
-.DS_Store
-/captures
-
-.svnignore
+#Subversion
 .svn/
+.svnignore
