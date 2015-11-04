@@ -31,7 +31,7 @@ public class TankClientActivity extends AppCompatActivity {
 
 
     private GameGrid game;
-    private edu.unh.cs.cs619_2015_project2.g9.ImageAdapter imageAdapter;
+    private ImageAdapter imageAdapter;
 
     @ViewById
     protected GridView gridview;
@@ -42,8 +42,9 @@ public class TankClientActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-       // imageAdapter = new edu.unh.cs.cs619_2015_project2.g9.ImageAdapter(this, grid);
-        imageAdapter = new edu.unh.cs.cs619_2015_project2.g9.ImageAdapter(this);
+
+        imageAdapter = new edu.unh.cs.cs619_2015_project2.g9.ImageAdapter(this, game.tempGrid);
+      //  imageAdapter = new edu.unh.cs.cs619_2015_project2.g9.ImageAdapter(this);
         gridview.setAdapter(imageAdapter );
 
         Button up = (Button) findViewById(R.id.up);
@@ -54,28 +55,32 @@ public class TankClientActivity extends AppCompatActivity {
         up.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                game.move(GameGrid.UP);
+                byte z = 0;
+                game.move(z);
             }
         });
 
         down.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                game.move(GameGrid.DOWN);
+                byte z = 4;
+                game.move(z);
             }
         });
 
         left.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                game.turn(GameGrid.LEFT);
+                byte z = 6;
+                game.move(z);
             }
         });
 
         right.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                game.turn(GameGrid.RIGHT);
+                byte z = 2;
+                game.move(z);
             }
         });
 
@@ -113,6 +118,8 @@ public class TankClientActivity extends AppCompatActivity {
     @AfterViews
     protected void afterViewInjection() {
         game = new GameGrid(16, 16);
+        imageAdapter.updateGrid(game.tempGrid);
+        gridview.setAdapter(imageAdapter );
         SystemClock.sleep(500);
     }
 }

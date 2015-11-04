@@ -1,0 +1,10 @@
+Week 2 report.
+This week we added
+	- Tiles for each possible object to be displayed in game
+	- A tile factory to make said tiles
+	- A game grid, that will contaion a table of tiles and will update the grid when given input 	from the main activity.
+	- The main activity will now display the game on screen. It will have a game grid object 	that it can update via button presses. It sends the grid to an image adapter to display in 	the gridview.
+	- A gridview to display the different tiles
+	- A image adapter class to display images in the gridview
+
+Also, created the images for all of the different objects in the game grid that will need to be shown, except for the missile.

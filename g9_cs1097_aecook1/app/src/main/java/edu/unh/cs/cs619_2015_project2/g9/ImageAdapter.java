@@ -7,19 +7,40 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
-import edu.unh.cs.cs619_2015_project2.g9.tiles.Tile;
-import edu.unh.cs.cs619_2015_project2.g9.tiles.Wall;
-
 public class ImageAdapter extends BaseAdapter {
     private Context mContext;
-    private Tile[] sgrid;
+    private int[] sgrid =
+            { 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000,
+              1000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 1001, 0000, 0000, 1000,
+              1000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 1001, 0000, 0000, 1000,
+              1000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 1001, 0000, 0000, 1000,
+              1000, 1001, 1001, 1001, 1001, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 1001, 0000, 0000, 1000,
+              1000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 1001, 0000, 0000, 1000,
+              1000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 1001, 0000, 0000, 1000,
+              1000, 0000, 0000, 0000, 0000, 10000060, 0000, 0000, 0000, 0000, 0000, 0000, 1001, 0000, 0000, 1000,
+              1000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 1001, 0000, 0000, 1000,
+              1000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 1001, 1001, 1001, 1001, 1001, 0000, 0000, 1000,
+              1000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 1000,
+              1000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 1000,
+              1000, 0000, 1001, 1001, 1001, 1001, 1001, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 1000,
+              1000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 1000,
+              1000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 0000, 1000,
+              1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000
+            };
     // Constructor
     public ImageAdapter(Context c) {
         mContext = c;
     }
-    public ImageAdapter(Context c, Tile[][] mgrid) {
+    public ImageAdapter(Context c, int[][] mgrid) {
         mContext = c;
-        updateGrid(mgrid);
+        int index = 0;
+        for ( int i = 0; i < 16; i++)
+        {
+            for ( int u = 0; u < 16; u++)
+            {
+                sgrid[index] = mgrid[i][u];
+            }
+        }
     }
     public int getCount() {
         return 16*16;
@@ -32,7 +53,7 @@ public class ImageAdapter extends BaseAdapter {
     public long getItemId(int position) {
         return 0;
     }
-    public void updateGrid( Tile[][] mgrid)
+    public void updateGrid( int[][] mgrid)
     {
         int index = 0;
         for ( int i = 0; i < 16; i++)
@@ -40,7 +61,6 @@ public class ImageAdapter extends BaseAdapter {
             for ( int u = 0; u < 16; u++)
             {
                 sgrid[index] = mgrid[i][u];
-                index++;
             }
         }
     }
@@ -66,17 +86,15 @@ public class ImageAdapter extends BaseAdapter {
 
     int getImage(int pos)
     {
-        if(sgrid[pos].getType() == Tile.WALL)
+        if(sgrid[pos] == 1000)
         {
-            Wall w = (Wall) sgrid[pos];
-            if (w.life == -1) {
-                return R.mipmap.wall_unbreakable;
-            } else {
-                return R.mipmap.wall_breakable;
-            }
+            return R.mipmap.wall_unbreakable;
         }
-
-        if(sgrid[pos].getType() == Tile.TANK)
+        if(sgrid[pos] >1000 && sgrid[pos] <= 2000)
+        {
+            return R.mipmap.wall_breakable;
+        }
+        if(sgrid[pos] > 10000000 && sgrid[pos] <= 20000000)
         {
             return R.mipmap.tank_forward;
         }
