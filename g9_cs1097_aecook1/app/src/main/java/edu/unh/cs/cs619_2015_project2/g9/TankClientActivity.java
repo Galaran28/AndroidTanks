@@ -55,32 +55,28 @@ public class TankClientActivity extends AppCompatActivity {
         up.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                byte z = 0;
-                game.move(z);
+                game.move(GameGrid.UP);
             }
         });
 
         down.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                byte z = 4;
-                game.move(z);
+                game.move(GameGrid.DOWN);
             }
         });
 
         left.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                byte z = 6;
-                game.move(z);
+            public void onClick(View view) {;
+                game.turn(GameGrid.LEFT);
             }
         });
 
         right.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                byte z = 2;
-                game.move(z);
+                game.turn(GameGrid.RIGHT);
             }
         });
 
@@ -117,7 +113,7 @@ public class TankClientActivity extends AppCompatActivity {
 
     @AfterViews
     protected void afterViewInjection() {
-        game = new GameGrid(16, 16);
+        game = new GameGrid();
         imageAdapter.updateGrid(game.tempGrid);
         gridview.setAdapter(imageAdapter );
         SystemClock.sleep(500);

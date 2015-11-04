@@ -3,7 +3,9 @@ package edu.unh.cs.cs619_2015_project2.g9;
 import android.util.Log;
 
 import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.rest.RestService;
+import org.springframework.web.client.RestClientException;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -21,8 +23,10 @@ import edu.unh.cs.cs619_2015_project2.g9.util.GridWrapper;
  *
  * @Author Chris Sleys
  */
+@EBean
 public class GameGrid {
     // enumberations for the directions and the turn length
+    public static final String TAG = "GameGrid";
     public static final long POL_INTERVAL = 100;
     public static final int MOVE_INTERVAL = 500;
     public static final int FIRE_INTERVAL = 500;
@@ -30,6 +34,8 @@ public class GameGrid {
     public static final byte DOWN = 4;
     public static final byte LEFT = 6;
     public static final byte RIGHT = 2;
+    public static final int x = 16;
+    public static final int y = 16;
 
     public int[][] tempGrid; // used for testing
     private long tankId;
@@ -42,12 +48,17 @@ public class GameGrid {
 
     private Tile[][] board;
 
-    public GameGrid(int x, int y) {
+
+    public GameGrid() {
         es = Executors.newScheduledThreadPool(3);
         factory = new TileFactory();
         board = new Tile[x][y];
 
-        tankId = restClient.join().getResult();
+        try {
+            tankId = restClient.join().getResult();
+        } catch (RestClientException e) {
+            Log.e(TAG, e.toString());
+        }
 
         // update board every POL_INTERVAL milliseconds
         es.scheduleAtFixedRate(new Runnable() {
