@@ -10,6 +10,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.GridView;
 
 import edu.unh.cs.cs619_2015_project2.g9.rest.BulletZoneRestClient;
 import edu.unh.cs.cs619_2015_project2.g9.util.GridWrapper;
@@ -18,6 +21,7 @@ import edu.unh.cs.cs619_2015_project2.g9.util.LongWrapper;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
 
 @EActivity
@@ -25,10 +29,12 @@ public class TankClientActivity extends AppCompatActivity {
 
     private static final String TAG = "TankClientActivity";
 
-    @RestService
-    BulletZoneRestClient restClient;
 
-    private long tankId = -1;
+    private GameGrid game;
+    private ImageAdapter imageAdapter;
+
+    @ViewById
+    protected GridView gridview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,14 +43,51 @@ public class TankClientActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        imageAdapter = new edu.unh.cs.cs619_2015_project2.g9.ImageAdapter(this, game.tempGrid);
+      //  imageAdapter = new edu.unh.cs.cs619_2015_project2.g9.ImageAdapter(this);
+        gridview.setAdapter(imageAdapter );
+
+        Button up = (Button) findViewById(R.id.up);
+        Button down = (Button) findViewById(R.id.down);
+        Button left = (Button) findViewById(R.id.left);
+        Button right = (Button) findViewById(R.id.right);
+
+        up.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                game.move(GameGrid.UP);
+            }
+        });
+
+        down.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                game.move(GameGrid.DOWN);
+            }
+        });
+
+        left.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {;
+                game.turn(GameGrid.LEFT);
+            }
+        });
+
+        right.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                game.turn(GameGrid.RIGHT);
+            }
+        });
+
+/*        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, String.valueOf(tankId), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
-        });
+        });*/
     }
 
     @Override
@@ -70,19 +113,9 @@ public class TankClientActivity extends AppCompatActivity {
 
     @AfterViews
     protected void afterViewInjection() {
-        joinAsync();
+        game = new GameGrid();
+        imageAdapter.updateGrid(game.tempGrid);
+        gridview.setAdapter(imageAdapter );
         SystemClock.sleep(500);
-        //gridView.setAdapter(mGridAdapter);
-    }
-
-    @Background
-    void joinAsync() {
-        try {
-            tankId = restClient.join().getResult();
-            // gridPollTask.doPoll();
-            Log.d(TAG, "tankId is " + tankId);
-        } catch (Exception e) {
-
-        }
     }
 }
