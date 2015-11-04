@@ -3,6 +3,8 @@ package edu.unh.cs.cs619_2015_project2.g9;
 import android.util.Log;
 
 import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.EProvider;
 import org.androidannotations.annotations.rest.RestService;
 
 import java.util.Timer;
@@ -21,8 +23,9 @@ import edu.unh.cs.cs619_2015_project2.g9.util.GridWrapper;
  *
  * @Author Chris Sleys
  */
+@EProvider
 public class GameGrid {
-    // enumberations for the directions and the turn length
+    // enumerations for the directions and the turn length
     public static final long POL_INTERVAL = 100;
     public static final int MOVE_INTERVAL = 500;
     public static final int FIRE_INTERVAL = 500;
@@ -104,5 +107,9 @@ public class GameGrid {
                 board[i][j] = factory.createTile(grid[i][j]);
             }
         }
+    }
+
+    public Tile[][] getGrid() {
+        return board;
     }
 }

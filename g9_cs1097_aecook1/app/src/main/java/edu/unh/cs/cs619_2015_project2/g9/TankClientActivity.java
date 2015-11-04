@@ -42,7 +42,6 @@ public class TankClientActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
        // imageAdapter = new edu.unh.cs.cs619_2015_project2.g9.ImageAdapter(this, grid);
         imageAdapter = new edu.unh.cs.cs619_2015_project2.g9.ImageAdapter(this);
         gridview.setAdapter(imageAdapter );
@@ -55,24 +54,28 @@ public class TankClientActivity extends AppCompatActivity {
         up.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                game.move(GameGrid.UP);
             }
         });
 
         down.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                game.move(GameGrid.DOWN);
             }
         });
 
         left.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                game.turn(GameGrid.LEFT);
             }
         });
 
         right.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                game.turn(GameGrid.RIGHT);
             }
         });
 
