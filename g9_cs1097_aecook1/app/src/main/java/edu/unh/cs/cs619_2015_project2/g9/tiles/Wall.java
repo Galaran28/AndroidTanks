@@ -6,6 +6,7 @@ package edu.unh.cs.cs619_2015_project2.g9.tiles;
  * @Author Chris Sleys
  */
 public class Wall extends Tile {
+    public static final int INDESTRUCTIBLE = -1;
     public int life;
 
     public Wall(int integerRepresentation) {

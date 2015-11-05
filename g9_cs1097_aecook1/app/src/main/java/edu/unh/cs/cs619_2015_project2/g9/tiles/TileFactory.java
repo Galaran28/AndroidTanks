@@ -2,11 +2,14 @@ package edu.unh.cs.cs619_2015_project2.g9.tiles;
 
 import android.util.Log;
 
+import org.androidannotations.annotations.EBean;
+
 /**
  * Factory for generating tiles
  *
  * @Author Chris Sleys
  */
+@EBean(scope = EBean.Scope.Singleton)
 public class TileFactory {
     public static final String TAG = "TileFactory";
 

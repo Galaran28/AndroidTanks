@@ -1,5 +1,7 @@
 package edu.unh.cs.cs619_2015_project2.g9.tiles;
 
+import org.androidannotations.annotations.EBean;
+
 /**
  * Tile base class
  *

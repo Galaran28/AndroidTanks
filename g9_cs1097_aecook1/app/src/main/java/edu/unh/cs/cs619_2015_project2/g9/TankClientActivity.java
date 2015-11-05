@@ -2,41 +2,34 @@ package edu.unh.cs.cs619_2015_project2.g9;
 
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 
-import edu.unh.cs.cs619_2015_project2.g9.rest.BulletZoneRestClient;
-import edu.unh.cs.cs619_2015_project2.g9.util.GridWrapper;
-import edu.unh.cs.cs619_2015_project2.g9.util.LongWrapper;
-
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.rest.RestService;
 
-@EActivity
+import edu.unh.cs.cs619_2015_project2.g9.util.OttoBus;
+
+@EActivity(R.layout.content_main)
 public class TankClientActivity extends AppCompatActivity {
-
     private static final String TAG = "TankClientActivity";
 
     @Bean
-    protected GameGrid game;
+    GameGrid game;
 
-    private ImageAdapter imageAdapter;
+    @Bean
+    GridAdapter gridAdapter;
 
     @ViewById
-    protected GridView gridview;
+    GridView gridview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +37,6 @@ public class TankClientActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-
 
         Button up = (Button) findViewById(R.id.up);
         Button down = (Button) findViewById(R.id.down);
@@ -112,9 +103,7 @@ public class TankClientActivity extends AppCompatActivity {
     }
 
     @AfterViews
-    protected void afterViewInjection() {
-      //  imageAdapter = new edu.unh.cs.cs619_2015_project2.g9.ImageAdapter(this, game.getGrid());
-      //  gridview.setAdapter(imageAdapter );
-        SystemClock.sleep(500);
+    void afterView() {
+        gridview.setAdapter(gridAdapter );
     }
 }
