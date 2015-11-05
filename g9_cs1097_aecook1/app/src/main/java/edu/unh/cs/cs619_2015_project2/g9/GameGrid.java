@@ -2,6 +2,7 @@ package edu.unh.cs.cs619_2015_project2.g9;
 
 import android.util.Log;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.rest.RestService;
@@ -17,6 +18,7 @@ import edu.unh.cs.cs619_2015_project2.g9.rest.BulletZoneRestClient;
 import edu.unh.cs.cs619_2015_project2.g9.tiles.Tile;
 import edu.unh.cs.cs619_2015_project2.g9.tiles.TileFactory;
 import edu.unh.cs.cs619_2015_project2.g9.util.GridWrapper;
+import edu.unh.cs.cs619_2015_project2.g9.util.LongWrapper;
 
 /**
  * GameGrid represents the game board
@@ -37,7 +39,6 @@ public class GameGrid {
     public static final int x = 16;
     public static final int y = 16;
 
-    public int[][] tempGrid; // used for testing
     private long tankId;
     private boolean hasFired, hasMoved, hasTurned;
     private TileFactory factory;
@@ -48,17 +49,10 @@ public class GameGrid {
 
     private Tile[][] board;
 
-
     public GameGrid() {
         es = Executors.newScheduledThreadPool(3);
         factory = new TileFactory();
         board = new Tile[x][y];
-
-        try {
-            tankId = restClient.join().getResult();
-        } catch (RestClientException e) {
-            Log.e(TAG, e.toString());
-        }
 
         // update board every POL_INTERVAL milliseconds
         es.scheduleAtFixedRate(new Runnable() {
@@ -86,6 +80,19 @@ public class GameGrid {
         }, 0, FIRE_INTERVAL, TimeUnit.MILLISECONDS);
     }
 
+    @AfterInject
+    @Background
+    protected void afterInjection() {
+        try {
+            tankId = restClient.join().getResult();
+        } catch (RestClientException e) {
+            Log.e(TAG, e.toString());
+        }
+
+        parseGrid(restClient.grid().getGrid());
+    }
+
+    @Background
     public void fireBullet() {
         // TODO: keep track of bullets, cannot fire if 2 or more bullets already exist
         // TODO: shake to fire bullets
@@ -95,6 +102,7 @@ public class GameGrid {
         }
     }
 
+    @Background
     public void move(byte direction) {
         // TODO; add constraints, tank can only move in the direction its facing
         if (!hasMoved) {
@@ -103,6 +111,7 @@ public class GameGrid {
         }
     }
 
+    @Background
     public void turn(byte direction) {
         if (!hasTurned) {
             restClient.turn(tankId, direction);
@@ -111,11 +120,14 @@ public class GameGrid {
     }
 
     private void parseGrid(int[][] grid) {
-        tempGrid = grid;
         for (int i = 0; i <= board.length; i++) {
             for (int j = 0; j <= board[0].length; j++) {
                 board[i][j] = factory.createTile(grid[i][j]);
             }
         }
+    }
+
+    public Tile[][] getGrid() {
+        return board;
     }
 }

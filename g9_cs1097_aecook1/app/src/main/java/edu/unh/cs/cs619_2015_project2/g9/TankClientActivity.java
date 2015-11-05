@@ -20,6 +20,7 @@ import edu.unh.cs.cs619_2015_project2.g9.util.LongWrapper;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.rest.RestService;
@@ -29,8 +30,9 @@ public class TankClientActivity extends AppCompatActivity {
 
     private static final String TAG = "TankClientActivity";
 
+    @Bean
+    protected GameGrid game;
 
-    private GameGrid game;
     private ImageAdapter imageAdapter;
 
     @ViewById
@@ -43,9 +45,7 @@ public class TankClientActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        imageAdapter = new edu.unh.cs.cs619_2015_project2.g9.ImageAdapter(this, game.tempGrid);
-      //  imageAdapter = new edu.unh.cs.cs619_2015_project2.g9.ImageAdapter(this);
-        gridview.setAdapter(imageAdapter );
+
 
         Button up = (Button) findViewById(R.id.up);
         Button down = (Button) findViewById(R.id.down);
@@ -113,9 +113,8 @@ public class TankClientActivity extends AppCompatActivity {
 
     @AfterViews
     protected void afterViewInjection() {
-        game = new GameGrid();
-        imageAdapter.updateGrid(game.tempGrid);
-        gridview.setAdapter(imageAdapter );
+      //  imageAdapter = new edu.unh.cs.cs619_2015_project2.g9.ImageAdapter(this, game.getGrid());
+      //  gridview.setAdapter(imageAdapter );
         SystemClock.sleep(500);
     }
 }
