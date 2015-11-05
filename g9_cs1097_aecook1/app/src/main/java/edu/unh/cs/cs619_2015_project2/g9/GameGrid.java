@@ -83,7 +83,9 @@ public class GameGrid {
     public void fireBullet() {
         // TODO: keep track of bullets, cannot fire if 2 or more bullets already exist
         // TODO: shake to fire bullets
+        Log.d(TAG, "Fireing....");
         if (!hasFired) {
+            Log.d(TAG, "Fire allowed....");
             restClient.fire(tankId);
             hasFired = true;
         }
@@ -92,7 +94,9 @@ public class GameGrid {
     @Background
     public void move(byte direction) {
         // TODO; add constraints, tank can only move in the direction its facing
+        Log.d(TAG, "Moving....");
         if (!hasMoved) {
+            Log.d(TAG, "Move allowed");
             restClient.move(tankId, direction);
             hasMoved = true;
         }
@@ -100,7 +104,9 @@ public class GameGrid {
 
     @Background
     public void turn(byte direction) {
+        Log.d(TAG, "Turning....");
         if (!hasTurned) {
+            Log.d(TAG, "Turning allowed");
             restClient.turn(tankId, direction);
             hasMoved = true;
         }
@@ -108,9 +114,10 @@ public class GameGrid {
 
     @Subscribe
     public void parseGrid(GridWrapper gw) {
+        Log.d(TAG, "parsing grid to Tile array");
         Tile[][] board = new Tile[x][y];
-        for (int i = 0; i <= board.length; i++) {
-            for (int j = 0; j <= board[i].length; j++) {
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
                 board[i][j] = factory.createTile(gw.getGrid()[i][j]);
             }
         }

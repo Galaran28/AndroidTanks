@@ -1,6 +1,7 @@
 package edu.unh.cs.cs619_2015_project2.g9;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -24,6 +25,7 @@ import edu.unh.cs.cs619_2015_project2.g9.util.OttoBus;
 
 @EBean
 public class GridAdapter extends BaseAdapter {
+    public static final String TAG = "GridAdaptor";
     ArrayList<Tile> tiles;
 
     @Bean
@@ -35,6 +37,7 @@ public class GridAdapter extends BaseAdapter {
     @AfterInject
     public void init() {
         tiles = new ArrayList<Tile>();
+        bus.register(this);
     }
 
     // create a new ImageView for each item referenced by the Adapter
@@ -80,6 +83,7 @@ public class GridAdapter extends BaseAdapter {
     @Subscribe
     public void updateGrid(Tile[][] board)
     {
+        Log.d(TAG, "Updateing GridView");
         tiles.clear(); //clear internal arraylist
         int index = 0;
         for ( int i = 0; i < board.length; i++) {
