@@ -1,14 +1,22 @@
 package edu.unh.cs.cs619_2015_project2.g9;
 
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.Toast;
+
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -19,7 +27,7 @@ import org.androidannotations.annotations.ViewById;
 import edu.unh.cs.cs619_2015_project2.g9.util.OttoBus;
 
 @EActivity(R.layout.content_main)
-public class TankClientActivity extends AppCompatActivity {
+public class TankClientActivity extends AppCompatActivity implements View.OnTouchListener {
     private static final String TAG = "TankClientActivity";
 
     @Bean
@@ -31,6 +39,13 @@ public class TankClientActivity extends AppCompatActivity {
     @ViewById
     GridView gridview;
 
+    private SensorManager mSensorManager;
+    private float mAccel; // acceleration apart from gravity
+    private float mAccelCurrent; // current acceleration including gravity
+    private float mAccelLast; // last acceleration including gravity
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,7 +53,25 @@ public class TankClientActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Button up = (Button) findViewById(R.id.up);
+
+
+
+        mSensorManager = (SensorManager) getSystemService(getApplicationContext().SENSOR_SERVICE);
+        mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+        mAccel = 0.00f;
+        mAccelCurrent = SensorManager.GRAVITY_EARTH;
+        mAccelLast = SensorManager.GRAVITY_EARTH;
+
+
+        gridview.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Toast toast = Toast.makeText(getApplicationContext(), "Device has pressed.", Toast.LENGTH_SHORT);
+                toast.show();
+                return true;
+            }
+        });
+      /*  Button up = (Button) findViewById(R.id.up);
         Button down = (Button) findViewById(R.id.down);
         Button left = (Button) findViewById(R.id.left);
         Button right = (Button) findViewById(R.id.right);
@@ -47,8 +80,10 @@ public class TankClientActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 game.move(GameGrid.UP);
+               Toast.makeText(getApplicationContext(), "UP", Toast.LENGTH_SHORT);
             }
-        });
+        }
+        );
 
         down.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,6 +116,42 @@ public class TankClientActivity extends AppCompatActivity {
         });*/
     }
 
+
+   /* @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        // Normal event dispatch to this container's children, ignore the return value
+        super.dispatchTouchEvent(ev);
+      Toast toast = Toast.makeText(getApplicationContext(), "Device was pressed.", Toast.LENGTH_SHORT);
+        toast.show();
+        return true;
+    }*/
+
+    @Override
+    public boolean onTouch(View v, MotionEvent ev)
+    {
+        Toast toast = Toast.makeText(getApplicationContext(), "Device was pressed.", Toast.LENGTH_SHORT);
+        toast.show();
+        return true;
+    }
+
+    @Override
+    public void onUserInteraction(){
+      //  Toast toast = Toast.makeText(getApplicationContext(), "Device has shaken.", Toast.LENGTH_SHORT);
+       // toast.show();
+
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        int x = (int)event.getX();
+        int y = (int)event.getY();
+        Toast toast = Toast.makeText(getApplicationContext(), "Device has shaken.", Toast.LENGTH_SHORT);
+        toast.show();
+        return true;
+    }
+
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -105,5 +176,40 @@ public class TankClientActivity extends AppCompatActivity {
     @AfterViews
     void afterView() {
         gridview.setAdapter(gridAdapter );
+    }
+
+
+
+    private final SensorEventListener mSensorListener = new SensorEventListener() {
+
+        public void onSensorChanged(SensorEvent se) {
+            float x = se.values[0];
+            float y = se.values[1];
+            float z = se.values[2];
+            mAccelLast = mAccelCurrent;
+            mAccelCurrent = (float) Math.sqrt((double) (x*x + y*y + z*z));
+            float delta = mAccelCurrent - mAccelLast;
+            mAccel = mAccel * 0.9f + delta; // perform low-cut filter
+            if (mAccel > 12) {
+                Toast toast = Toast.makeText(getApplicationContext(), "Device has shaken.", Toast.LENGTH_SHORT);
+                toast.show();
+                game.fireBullet();
+            }
+        }
+
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        }
+    };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
+    protected void onPause() {
+        mSensorManager.unregisterListener(mSensorListener);
+        super.onPause();
     }
 }

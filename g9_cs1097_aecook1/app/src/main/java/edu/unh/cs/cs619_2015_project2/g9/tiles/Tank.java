@@ -21,4 +21,9 @@ public class Tank extends Tile {
     public int getType() {
         return this.TANK;
     }
+
+    public int getDirection()
+    {
+        return direction;
+    }
 }

@@ -16,4 +16,8 @@ public class Tile {
     public int getType() {
         return this.TILE;
     }
+    public int getDirection()
+    {
+        return 0;
+    };
 }

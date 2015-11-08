@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.squareup.otto.Subscribe;
 
@@ -40,14 +41,18 @@ public class GridAdapter extends BaseAdapter {
         bus.register(this);
     }
 
+    @Bean
+    GameGrid game;
+
+
     // create a new ImageView for each item referenced by the Adapter
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ImageView imageView;
+    public View getView(final int position, View convertView, ViewGroup parent) {
+        final ImageView imageView;
 
         if (convertView == null) {
             imageView = new ImageView(context);
-            imageView.setLayoutParams(new GridView.LayoutParams(85, 85));
+       //     imageView.setLayoutParams(new GridView.LayoutParams(85, 85));
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
            // imageView.setPadding(8, 8, 8, 8);
         }
@@ -57,8 +62,18 @@ public class GridAdapter extends BaseAdapter {
         }
 
         imageView.setImageResource(getImage(position));
+
+        imageView.setAdjustViewBounds(true);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                move(position);
+            }
+        });
         return imageView;
     }
+
+
 
     int getImage(int pos) {
         //TODO: add support for bullets
@@ -66,19 +81,96 @@ public class GridAdapter extends BaseAdapter {
         if(t.getType() == Tile.WALL) {
             if (((Wall)t).life == Wall.INDESTRUCTIBLE) {
                 return R.mipmap.wall_unbreakable;
+
             } else {
                 return R.mipmap.wall_breakable;
             }
         }
 
-        if(t.getType() == Tile.TANK)
+        if(t.getType() == Tile.BULLET)
         {
-            //TODO: rotate image to match tank direction
-            return R.mipmap.tank_forward;
+            return  R.mipmap.bullet;
         }
 
-        return R.mipmap.blankspace;
+        if(t.getType() == Tile.TANK)
+        {
+            if(t.getDirection() == 0)
+            {
+                return  R.mipmap.tank_forward;
+            }
+            if(t.getDirection() == 2)
+            {
+                return  R.mipmap.tank_right;
+            }
+            if(t.getDirection() == 4)
+            {
+                return  R.mipmap.tank_down;
+            }
+            if(t.getDirection() == 6)
+            {
+                return  R.mipmap.tank_left;
+            }
+            //TODO: rotate image to match tank direction
+
+        }
+
+        if (t.getType() == Tile.TILE) {
+
+            return R.mipmap.blankspace;
+        }
+
+        return R.mipmap.ic_launcher;
     }
+
+    void move(int pos)
+    {
+
+        for (int i = 0; i < 3; i++)
+        {
+            if (pos >= 4+(i*16) && pos <= 11+(i*16))
+            {
+                game.move(game.UP);
+          //      Toast.makeText(context, "Move forward", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+
+        for (int i = 12; i < 16; i++)
+        {
+            if (pos >= 4+(i*16) && pos <= 11+(i*16))
+            {
+                game.move(game.DOWN);
+           //     Toast.makeText(context, "Move Down", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+
+        for (int i = 0; i < 8; i++)
+        {
+            if (pos >= (i+4)*16 && pos <= ((i+4)*16)+3 )
+            {
+                game.move(game.LEFT);
+           //     Toast.makeText(context, "Move left", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+        for (int i = 0; i < 8; i++)
+        {
+            if (pos >= ( (i+4)*16)+13 && pos <= ((i+4)*16)+15 )
+            {
+                game.move(game.RIGHT);
+              //  Toast.makeText(context, "Move right", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+
+
+    }
+
+
+
+
+
 
     @Subscribe
     public void updateGrid(Tile[][] board)
