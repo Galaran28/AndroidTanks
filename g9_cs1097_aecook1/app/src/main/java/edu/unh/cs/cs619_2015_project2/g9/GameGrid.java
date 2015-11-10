@@ -45,6 +45,7 @@ public class GameGrid {
     private long tankId;
     private boolean hasFired, hasMoved, hasTurned;
 
+
     @Bean
     protected OttoBus bus;
 
@@ -82,7 +83,6 @@ public class GameGrid {
     @Background
     public void fireBullet() {
         // TODO: keep track of bullets, cannot fire if 2 or more bullets already exist
-        // TODO: shake to fire bullets
         Log.d(TAG, "Fireing....");
         if (!hasFired) {
             Log.d(TAG, "Fire allowed....");
@@ -92,11 +92,14 @@ public class GameGrid {
     }
 
     @Background
+    @Subscribe
     public void move(byte direction) {
         // TODO; add constraints, tank can only move in the direction its facing
         Log.d(TAG, "Moving....");
+
         if (!hasMoved) {
             Log.d(TAG, "Move allowed");
+          //  if ( )
             restClient.move(tankId, direction);
             hasMoved = true;
         }
@@ -141,4 +144,9 @@ public class GameGrid {
             SystemClock.sleep(FIRE_INTERVAL);
         }
     }
+
+   public long getTankId()
+   {
+       return tankId;
+   }
 }

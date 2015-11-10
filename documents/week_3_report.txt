@@ -1,0 +1,10 @@
+Added a shake feature with some code I found online. It will now correctly shoot when shaken.
+Added onclick listeners to the image views in the grid adapter. They will now tell game grid to move when the screen is pressed around the top, bottom, left or right side.
+Fixed the tile factory so it will create the correct tiles. (before it was only possible for the factory to create blank tiles and walls)
+Added a public method to tile that will grab the direction. I overloaded it in the tank tile to return the direction. This might need to be changed for better coding practices, idk.
+
+I didn't get to loading images more efficiently.
+The imageviews in the adpater don't always recognize they are being pressed. This can make double tapping the screen often neccesary. I will fix this.
+Tank does not yet turn.
+
+Other than those 3 things I think we are all set.

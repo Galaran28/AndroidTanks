@@ -59,7 +59,6 @@ public class TileFactory {
         if (integerRepresentation >= 10000000 && integerRepresentation <= 20000000)
         {
             ret = new Tank(integerRepresentation);
-       //     Log.e(TAG, String.valueOf(integerRepresentation) );
             return ret;
         }
 

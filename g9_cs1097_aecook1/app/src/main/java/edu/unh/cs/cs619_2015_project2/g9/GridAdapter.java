@@ -52,9 +52,7 @@ public class GridAdapter extends BaseAdapter {
 
         if (convertView == null) {
             imageView = new ImageView(context);
-       //     imageView.setLayoutParams(new GridView.LayoutParams(85, 85));
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-           // imageView.setPadding(8, 8, 8, 8);
         }
         else
         {
@@ -110,8 +108,6 @@ public class GridAdapter extends BaseAdapter {
             {
                 return  R.mipmap.tank_left;
             }
-            //TODO: rotate image to match tank direction
-
         }
 
         if (t.getType() == Tile.TILE) {
@@ -130,7 +126,7 @@ public class GridAdapter extends BaseAdapter {
             if (pos >= 4+(i*16) && pos <= 11+(i*16))
             {
                 game.move(game.UP);
-          //      Toast.makeText(context, "Move forward", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Move forward", Toast.LENGTH_SHORT).show();
                 return;
             }
         }
@@ -140,7 +136,7 @@ public class GridAdapter extends BaseAdapter {
             if (pos >= 4+(i*16) && pos <= 11+(i*16))
             {
                 game.move(game.DOWN);
-           //     Toast.makeText(context, "Move Down", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Move Down", Toast.LENGTH_SHORT).show();
                 return;
             }
         }
@@ -150,7 +146,7 @@ public class GridAdapter extends BaseAdapter {
             if (pos >= (i+4)*16 && pos <= ((i+4)*16)+3 )
             {
                 game.move(game.LEFT);
-           //     Toast.makeText(context, "Move left", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Move left", Toast.LENGTH_SHORT).show();
                 return;
             }
         }
@@ -159,7 +155,7 @@ public class GridAdapter extends BaseAdapter {
             if (pos >= ( (i+4)*16)+13 && pos <= ((i+4)*16)+15 )
             {
                 game.move(game.RIGHT);
-              //  Toast.makeText(context, "Move right", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Move right", Toast.LENGTH_SHORT).show();
                 return;
             }
         }

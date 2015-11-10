@@ -21,7 +21,9 @@ import android.widget.Toast;
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Touch;
 import org.androidannotations.annotations.ViewById;
 
 import edu.unh.cs.cs619_2015_project2.g9.util.OttoBus;
@@ -143,9 +145,14 @@ public class TankClientActivity extends AppCompatActivity implements View.OnTouc
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        int x = (int)event.getX();
-        int y = (int)event.getY();
-        Toast toast = Toast.makeText(getApplicationContext(), "Device has shaken.", Toast.LENGTH_SHORT);
+        Toast toast = Toast.makeText(getApplicationContext(), "Device was touched.", Toast.LENGTH_SHORT);
+        toast.show();
+        return true;
+    }
+
+    @Touch
+    public boolean button(View v, MotionEvent event) {
+        Toast toast = Toast.makeText(getApplicationContext(), "Device was pressed.", Toast.LENGTH_SHORT);
         toast.show();
         return true;
     }
@@ -180,6 +187,8 @@ public class TankClientActivity extends AppCompatActivity implements View.OnTouc
 
 
 
+
+
     private final SensorEventListener mSensorListener = new SensorEventListener() {
 
         public void onSensorChanged(SensorEvent se) {
@@ -191,7 +200,7 @@ public class TankClientActivity extends AppCompatActivity implements View.OnTouc
             float delta = mAccelCurrent - mAccelLast;
             mAccel = mAccel * 0.9f + delta; // perform low-cut filter
             if (mAccel > 12) {
-                Toast toast = Toast.makeText(getApplicationContext(), "Device has shaken.", Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(getApplicationContext(), "Device has shaken. ", Toast.LENGTH_SHORT);
                 toast.show();
                 game.fireBullet();
             }
