@@ -13,6 +13,12 @@ import org.androidannotations.annotations.EBean;
 @EBean(scope = EBean.Scope.Singleton)
 public class TileFactory {
     public static final String TAG = "TileFactory";
+    private Tile blankTile, unbreakableWall;
+
+    public TileFactory() {
+        blankTile = new Tile();
+        unbreakableWall = new Wall(1000);
+    }
 
     /**
      * Take in the integer representations of the tiles and generates the correct tile object
@@ -21,49 +27,21 @@ public class TileFactory {
      * @return
      */
     public Tile createTile(int integerRepresentation) {
-/*        Tile ret;
+        Tile ret = null;
         if (integerRepresentation == 0) {
-            ret = new Tile();
-        } else if (integerRepresentation >= 100 || integerRepresentation <= 2000) {
+            ret = blankTile;
+        } else if (integerRepresentation == 1) {
+            ret = unbreakableWall;
+        } else if (integerRepresentation > 1000 && integerRepresentation <= 2000) {
             ret = new Wall(integerRepresentation);
-        } else if (integerRepresentation >= 2000000 || integerRepresentation <= 3000000) {
+        } else if  (integerRepresentation >= 2000000 && integerRepresentation <= 3000000) {
             ret = new Bullet(integerRepresentation);
-        } else if (integerRepresentation >= 10000000 || integerRepresentation <= 20000000) {
+        } else if (integerRepresentation >= 10000000 && integerRepresentation <= 20000000) {
             ret = new Tank(integerRepresentation);
         } else {
             Log.e(TAG, "invalid value in grid");
-            ret = null;
-        }
-*/
-        Tile ret;
-        if (integerRepresentation == 0) {
-            ret = new Tile();
-         //   Log.e(TAG, String.valueOf(integerRepresentation) );
-            return ret;
         }
 
-        if (integerRepresentation >= 100 && integerRepresentation <= 2000)
-        {
-            ret = new Wall(integerRepresentation);
-         //   Log.e(TAG, String.valueOf(integerRepresentation) );
-            return ret;
-        }
-
-        if  (integerRepresentation >= 2000000 && integerRepresentation <= 3000000)
-        {
-            ret = new Bullet(integerRepresentation);
-          //  Log.e(TAG, String.valueOf(integerRepresentation) );
-            return ret;
-        }
-
-        if (integerRepresentation >= 10000000 && integerRepresentation <= 20000000)
-        {
-            ret = new Tank(integerRepresentation);
-            return ret;
-        }
-
-        Log.e(TAG, "invalid value in grid");
-        ret = null;
-        return ret;
+       return ret;
     }
 }
