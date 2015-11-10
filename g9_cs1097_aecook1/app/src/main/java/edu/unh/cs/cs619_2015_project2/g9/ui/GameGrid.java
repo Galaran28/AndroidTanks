@@ -1,4 +1,4 @@
-package edu.unh.cs.cs619_2015_project2.g9;
+package edu.unh.cs.cs619_2015_project2.g9.ui;
 
 import android.os.SystemClock;
 import android.util.Log;
@@ -16,6 +16,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import edu.unh.cs.cs619_2015_project2.g9.events.FireEvent;
+import edu.unh.cs.cs619_2015_project2.g9.events.MoveEvent;
+import edu.unh.cs.cs619_2015_project2.g9.events.TurnEvent;
 import edu.unh.cs.cs619_2015_project2.g9.rest.BulletZoneRestClient;
 import edu.unh.cs.cs619_2015_project2.g9.rest.PollerTask;
 import edu.unh.cs.cs619_2015_project2.g9.tiles.Tile;
@@ -60,6 +63,7 @@ public class GameGrid {
     @AfterInject
     @Background
     protected void afterInjection() {
+        Log.d(TAG, "afterInjection");
         bus.register(this);
 
         try {
@@ -80,10 +84,10 @@ public class GameGrid {
     }
 
     @Background
-    public void fireBullet() {
+    @Subscribe
+    public void fireBullet(FireEvent f) {
         // TODO: keep track of bullets, cannot fire if 2 or more bullets already exist
-        // TODO: shake to fire bullets
-        Log.d(TAG, "Fireing....");
+        Log.d(TAG, "Firing....");
         if (!hasFired) {
             Log.d(TAG, "Fire allowed....");
             restClient.fire(tankId);
@@ -92,22 +96,26 @@ public class GameGrid {
     }
 
     @Background
-    public void move(byte direction) {
+    @Subscribe
+    public void move(MoveEvent m) {
         // TODO; add constraints, tank can only move in the direction its facing
         Log.d(TAG, "Moving....");
+
         if (!hasMoved) {
             Log.d(TAG, "Move allowed");
-            restClient.move(tankId, direction);
+          //  if ( )
+            restClient.move(tankId, m.direction);
             hasMoved = true;
         }
     }
 
     @Background
-    public void turn(byte direction) {
+    @Subscribe
+    public void turn(TurnEvent t) {
         Log.d(TAG, "Turning....");
         if (!hasTurned) {
             Log.d(TAG, "Turning allowed");
-            restClient.turn(tankId, direction);
+            restClient.turn(tankId, t.direction);
             hasMoved = true;
         }
     }
@@ -141,4 +149,9 @@ public class GameGrid {
             SystemClock.sleep(FIRE_INTERVAL);
         }
     }
+
+   public long getTankId()
+   {
+       return tankId;
+   }
 }
