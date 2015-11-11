@@ -1,5 +1,7 @@
 package edu.unh.cs.cs619_2015_project2.g9.tiles;
 
+import edu.unh.cs.cs619_2015_project2.g9.ui.BulletUI;
+
 /**
  * A tile representing a bullet
  *
@@ -12,9 +14,6 @@ public class Bullet extends Tile {
         String parsable = Integer.toString(integerRepresentation);
         sourceTank = Integer.parseInt(parsable.substring(1, 3));
         damage = Integer.parseInt(parsable.substring(4, 6));
-    }
-
-    public int getType() {
-        return this.BULLET;
+        this.setUI(new BulletUI());
     }
 }
