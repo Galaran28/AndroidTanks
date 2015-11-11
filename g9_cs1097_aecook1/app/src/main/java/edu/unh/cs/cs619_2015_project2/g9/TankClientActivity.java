@@ -1,11 +1,8 @@
 package edu.unh.cs.cs619_2015_project2.g9;
 
-<<<<<<< Updated upstream
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
-=======
->>>>>>> Stashed changes
 import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
@@ -15,12 +12,15 @@ import android.widget.Toast;
 
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
+import edu.unh.cs.cs619_2015_project2.g9.events.FireEvent;
 import edu.unh.cs.cs619_2015_project2.g9.tiles.GameGrid;
 import edu.unh.cs.cs619_2015_project2.g9.ui.GridAdapter;
+import edu.unh.cs.cs619_2015_project2.g9.ui.TileUIFactory;
 import edu.unh.cs.cs619_2015_project2.g9.util.OttoBus;
 
 @EActivity(R.layout.content_main)
@@ -32,6 +32,9 @@ public class TankClientActivity extends AppCompatActivity {
 
     @Bean
     GameGrid game;
+
+    @Bean
+    TileUIFactory uiFactory;
 
     @Bean
     GridAdapter gridAdapter;
@@ -46,11 +49,11 @@ public class TankClientActivity extends AppCompatActivity {
 
     @AfterViews
     void afterView() {
-        //mSensorManager = (SensorManager) getSystemService(getApplicationContext().SENSOR_SERVICE);
-        //mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
-        //mAccel = 0.00f;
-        //mAccelCurrent = SensorManager.GRAVITY_EARTH;
-        //mAccelLast = SensorManager.GRAVITY_EARTH;
+        mSensorManager = (SensorManager) getSystemService(getApplicationContext().SENSOR_SERVICE);
+        mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+        mAccel = 0.00f;
+        mAccelCurrent = SensorManager.GRAVITY_EARTH;
+        mAccelLast = SensorManager.GRAVITY_EARTH;
 
         gridview.setAdapter(gridAdapter );
 
@@ -65,28 +68,28 @@ public class TankClientActivity extends AppCompatActivity {
     }
 
 
-//    private final SensorEventListener mSensorListener = new SensorEventListener() {
-//
-//        @Background
-//        public void onSensorChanged(SensorEvent se) {
-//            float x = se.values[0];
-//            float y = se.values[1];
-//            float z = se.values[2];
-//            mAccelLast = mAccelCurrent;
-//            mAccelCurrent = (float) Math.sqrt((double) (x*x + y*y + z*z));
-//            float delta = mAccelCurrent - mAccelLast;
-//            mAccel = mAccel * 0.9f + delta; // perform low-cut filter
-//            if (mAccel > 12) {
-//                Toast toast = Toast.makeText(getApplicationContext(), "Device has shaken. ", Toast.LENGTH_SHORT);
-//                toast.show();
-//                bus.post(new FireEvent());
-//            }
-//        }
-//
-//        @Background
-//        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-//        }
-//    };
+    private final SensorEventListener mSensorListener = new SensorEventListener() {
+
+        @Background
+        public void onSensorChanged(SensorEvent se) {
+            float x = se.values[0];
+            float y = se.values[1];
+            float z = se.values[2];
+            mAccelLast = mAccelCurrent;
+            mAccelCurrent = (float) Math.sqrt((double) (x*x + y*y + z*z));
+            float delta = mAccelCurrent - mAccelLast;
+            mAccel = mAccel * 0.9f + delta; // perform low-cut filter
+            if (mAccel > 12) {
+                Toast toast = Toast.makeText(getApplicationContext(), "Device has shaken. ", Toast.LENGTH_SHORT);
+                toast.show();
+                bus.post(new FireEvent());
+            }
+        }
+
+        @Background
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        }
+    };
 
     @Override
     protected void onResume() {
@@ -96,6 +99,7 @@ public class TankClientActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
+        super.onPause();
  //       mSensorManager.unregisterListener(mSensorListener);
     }
 }

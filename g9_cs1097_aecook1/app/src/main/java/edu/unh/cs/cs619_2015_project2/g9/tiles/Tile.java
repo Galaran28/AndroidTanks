@@ -2,9 +2,11 @@ package edu.unh.cs.cs619_2015_project2.g9.tiles;
 
 import android.graphics.drawable.Drawable;
 
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
 import edu.unh.cs.cs619_2015_project2.g9.ui.TileUI;
+import edu.unh.cs.cs619_2015_project2.g9.ui.TileUIFactory;
 
 /**
  * Tile base class
@@ -12,25 +14,24 @@ import edu.unh.cs.cs619_2015_project2.g9.ui.TileUI;
  * @Author Chris Sleys
  */
 public class Tile {
-    private TileUI ui;
     public static final byte UP = 0;
     public static final byte DOWN = 4;
     public static final byte LEFT = 6;
     public static final byte RIGHT = 2;
 
-    public Tile() {
-        setUI(new TileUI());
+    private TileUI ui;
+    private byte rotation = this.UP;
+
+    public Tile() {};
+    public Tile(TileUIFactory uiFactory) {
+        setUI(uiFactory.getBlank());
     }
 
-    public Drawable display() {
-        return ui.getImage();
+    public TileUI getUI() {
+        return ui;
     }
 
     public void setUI(TileUI ui) {
        this.ui = ui;
-    }
-
-    public TileUI getUI() {
-        return this.ui;
     }
 }

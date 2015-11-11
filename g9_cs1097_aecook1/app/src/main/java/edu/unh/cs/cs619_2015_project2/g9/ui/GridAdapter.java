@@ -21,7 +21,7 @@ import edu.unh.cs.cs619_2015_project2.g9.R;
 import edu.unh.cs.cs619_2015_project2.g9.events.MoveEvent;
 import edu.unh.cs.cs619_2015_project2.g9.tiles.Tile;
 import edu.unh.cs.cs619_2015_project2.g9.tiles.Wall;
-import edu.unh.cs.cs619_2015_project2.g9.ui.GameGrid;
+import edu.unh.cs.cs619_2015_project2.g9.tiles.GameGrid;
 import edu.unh.cs.cs619_2015_project2.g9.util.OttoBus;
 
 @EBean
@@ -63,48 +63,10 @@ public class GridAdapter extends BaseAdapter {
             imageView = (ImageView) convertView;
         }
 
-        imageView.setImageResource(getImage(position));
+        imageView.setImageDrawable(tiles.get(position).getUI().display());
+        imageView.setRotation(tiles.get(position).getUI().getRotation());
         imageView.setAdjustViewBounds(true);
         return imageView;
-    }
-
-    int getImage(int pos) {
-        Tile t = tiles.get(pos);
-        if(t.getType() == Tile.WALL) {
-            if (((Wall)t).life == Wall.INDESTRUCTIBLE) {
-                return R.drawable.wall_unbreakable;
-
-            } else {
-                return R.drawable.wall_breakable;
-            }
-        }
-
-        if(t.getType() == Tile.BULLET)
-        {
-            return  R.drawable.bullet;
-        }
-
-        if(t.getType() == Tile.TANK)
-        {
-            if(t.getDirection() == 0)
-            {
-                return  R.drawable.tank_forward;
-            }
-            if(t.getDirection() == 2)
-            {
-                return  R.drawable.tank_right;
-            }
-            if(t.getDirection() == 4)
-            {
-                return  R.drawable.tank_down;
-            }
-            if(t.getDirection() == 6)
-            {
-                return  R.drawable.tank_left;
-            }
-        }
-
-        return R.drawable.blankspace;
     }
 
     //TODO: use buttons to indicate direction rather than calculating it on the fly
@@ -115,7 +77,7 @@ public class GridAdapter extends BaseAdapter {
         {
             if (pos >= 4+(i*16) && pos <= 11+(i*16))
             {
-                bus.post(new MoveEvent(GameGrid.UP));
+                bus.post(new MoveEvent(Tile.UP));
                 Toast.makeText(context, "Move forward", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -125,7 +87,7 @@ public class GridAdapter extends BaseAdapter {
         {
             if (pos >= 4+(i*16) && pos <= 11+(i*16))
             {
-                bus.post(new MoveEvent(GameGrid.DOWN));
+                bus.post(new MoveEvent(Tile.DOWN));
                 Toast.makeText(context, "Move Down", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -135,7 +97,7 @@ public class GridAdapter extends BaseAdapter {
         {
             if (pos >= (i+4)*16 && pos <= ((i+4)*16)+3 )
             {
-                bus.post(new MoveEvent(GameGrid.LEFT));
+                bus.post(new MoveEvent(Tile.LEFT));
                 Toast.makeText(context, "Move left", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -144,7 +106,7 @@ public class GridAdapter extends BaseAdapter {
         {
             if (pos >= ( (i+4)*16)+13 && pos <= ((i+4)*16)+15 )
             {
-                bus.post(new MoveEvent(GameGrid.RIGHT));
+                bus.post(new MoveEvent(Tile.RIGHT));
                 Toast.makeText(context, "Move right", Toast.LENGTH_SHORT).show();
                 return;
             }

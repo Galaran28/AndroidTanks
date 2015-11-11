@@ -1,9 +1,9 @@
 package edu.unh.cs.cs619_2015_project2.g9.tiles;
 
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.RotateDrawable;
+import org.androidannotations.annotations.Bean;
 
-import edu.unh.cs.cs619_2015_project2.g9.ui.TankUI;
+import edu.unh.cs.cs619_2015_project2.g9.ui.TileUI;
+import edu.unh.cs.cs619_2015_project2.g9.ui.TileUIFactory;
 
 /**
  * A tile representing a tank
@@ -12,24 +12,20 @@ import edu.unh.cs.cs619_2015_project2.g9.ui.TankUI;
  */
 public class Tank extends Tile {
     public int life;
-    public int direction;
+    public byte direction;
     public int id;
 
-    public Tank(int integerRepresentation) {
+    public Tank(int integerRepresentation, TileUIFactory uiFactory) {
         String parsable = Integer.toString(integerRepresentation);
         id = Integer.parseInt(parsable.substring(1, 3));
         life =  Integer.parseInt(parsable.substring(4, 6));
-        direction = Integer.parseInt(parsable.substring(7));
-        this.setUI(new TankUI());
+        direction = Byte.parseByte(parsable.substring(7));
+
+        this.setUI(uiFactory.getTank());
+        TileUI ui = uiFactory.getTank();
+        ui.setRotation(direction);
+        this.setUI(ui);
     }
 
-    @Override
-    public Drawable display() {
-        RotateDrawable d = (RotateDrawable)getUI().getImage();
-        d.setLevel(500);
-
-        return d;
-    }
-}
-    }
+    public Tank() {};
 }

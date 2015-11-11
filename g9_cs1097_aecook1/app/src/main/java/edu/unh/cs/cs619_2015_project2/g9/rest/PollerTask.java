@@ -6,6 +6,7 @@ package edu.unh.cs.cs619_2015_project2.g9.rest;
 
 import android.os.SystemClock;
 
+import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
