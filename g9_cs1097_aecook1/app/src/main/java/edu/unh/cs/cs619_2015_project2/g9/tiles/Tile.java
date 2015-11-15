@@ -12,11 +12,16 @@ public class Tile {
     public static final int WALL = 1;
     public static final int BULLET = 2;
     public static final int TANK = 3;
+    public static final int PLAYER = 4;
 
     public int getType() {
         return this.TILE;
     }
     public int getDirection()
+    {
+        return 0;
+    };
+    public int getId()
     {
         return 0;
     };

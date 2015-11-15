@@ -12,7 +12,7 @@ public class Tank extends Tile {
 
     public Tank(int integerRepresentation) {
         String parsable = Integer.toString(integerRepresentation);
-        id = Integer.parseInt(parsable.substring(1, 3));
+        id = Integer.parseInt(parsable.substring(1, 4));
         life =  Integer.parseInt(parsable.substring(4, 6));
         direction = Integer.parseInt(parsable.substring(7));
     }
@@ -25,5 +25,10 @@ public class Tank extends Tile {
     public int getDirection()
     {
         return direction;
+    }
+    @Override
+    public int getId()
+    {
+        return id;
     }
 }

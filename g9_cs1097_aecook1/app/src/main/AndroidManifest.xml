@@ -12,14 +12,22 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".TankClientActivity_"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_main"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.NoActionBar" >
+
+        </activity>
+        <activity
+            android:name=".HomeScreen"
+            android:label="@string/title_activity_home_screen"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="landscape"
-            android:configChanges="keyboardHidden|orientation|screenSize"
             >
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>
