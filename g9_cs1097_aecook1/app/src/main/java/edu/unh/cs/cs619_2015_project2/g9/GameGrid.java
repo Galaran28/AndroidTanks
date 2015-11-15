@@ -83,6 +83,14 @@ public class GameGrid {
 
     }
 
+    /**
+     * Calls the rest client's fire bullet
+     * This is called from the tank activity
+     * Will only perform action if player is alive and there are less than 2 bullets
+     *
+     * @Author Cris Sleys
+     * Edited by Alex
+     */
     @Background
     public void fireBullet() {
         Log.d(TAG, "Fireing....");
@@ -94,6 +102,16 @@ public class GameGrid {
         }
     }
 
+    /**
+     * Calls the rest client's move
+     * This is called from the tank activity
+     * Will only perform action if player is alive and is facing the
+     * correct direction.
+     * Will call turn if the player is facing a different direction
+     *
+     * @Author Cris Sleys
+     * Edited by Alex
+     */
     @Background
     @Subscribe
     public void move(byte direction) {
@@ -113,6 +131,14 @@ public class GameGrid {
         }
     }
 
+    /**
+     * Calls the rest client's turn
+     * This is called from the gamegrid move method
+     * Will only perform action if player is alive and can make movements
+     *
+     * @Author Cris Sleys
+     * Edited by Alex
+     */
     @Background
     public void turn(byte direction) {
         Log.d(TAG, "Turning....");
@@ -123,6 +149,14 @@ public class GameGrid {
         }
     }
 
+
+    /**
+     *
+     * NOT SURE WHERE CALLED FROM
+     *
+     *
+     *
+     */
     @Subscribe
     public void parseGrid(GridWrapper gw) {
         Log.d(TAG, "parsing grid to Tile array");

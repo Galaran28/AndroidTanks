@@ -44,7 +44,12 @@ public class GridAdapter extends BaseAdapter {
     @Bean
     GameGrid game;
 
-
+    /**
+     * Creates a new image view for every image to display
+     * Calls getimage to determine the correct image to display
+     *
+     * @Author Alex Cook
+     */
     // create a new ImageView for each item referenced by the Adapter
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
@@ -116,7 +121,12 @@ public class GridAdapter extends BaseAdapter {
     }
 
 
-
+    /**
+     * Creates an array list of tiles
+     *
+     * @Author idk
+     *
+     */
     @Subscribe
     public void updateGrid(Tile[][] board)
     {
