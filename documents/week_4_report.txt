@@ -1,0 +1,46 @@
+Added a bunch of stuff:
+	- New Activity!: added a new home screen activity
+		- Completed:
+			- Has a home screen image
+			- Two buttons, one to join game the other to show replay. Show replay 				doesn't do anything yet.
+			- Plays homescreen music in a onResume method
+			- Stops the music in a onPause method
+			- Will correctly switch to the main tank activy when "join" button is 				clicked
+		- Still needs:
+			- To check if phone can connect to seerver before starting the main 				activity
+	
+	- New Tile!: added a new Player tile that is the same as tank but has it's own type. 
+	
+	- Added to the main activity:	
+		- Now has music
+			- Plays onResume
+			- Releases onPause
+		- Now has onlick anotations linked to transparent buttons that will call the 			gamegrid's shoot and move
+			- They work great!
+			- Move and shoot are no longer called in the grid addapter
+		- Cleaned up some of the code 
+	
+	- Added to TileFactory:
+		- Now also takes in a long varaible parameter that should always be the player 			tank id
+		- When creating a tank tile, tilefactory will check if the id is equal to the players, 			if it is, make it a player tile instead
+	
+	- Added to GameGrid:
+		- Added a playerDirection byte variable that keeps track on player direction
+		- Added a playerAlive boolean variable that represents if the player is found in 			the grid
+		- Both are set when grid is parsed. While parsing, it will check if a player tile was 		found. grabs info from it. Otherwise assumes player is dead
+		- Turn feature to gameGrid
+			- Is called from move if the player is not facing the correct direction
+		- Move, turn and shoot all work according to game rules. Will only be carried 			out if the player is alive.
+			- No more crashes for trying to move while dead!
+	
+	- Added to GridAdapter:
+		- Now displays the player and enemies differently
+		- Cleaned up some of the code
+	
+	Misc:
+	- Fixed the tile's constructors.
+		- They weren't parsing the integer value correctly
+		- Caused much headache!
+	- Added a lot more images
+		- Better graphics!
+		- Need to orginize the images

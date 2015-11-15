@@ -51,12 +51,6 @@ public class GridAdapter extends BaseAdapter {
         if (convertView == null) {
             imageView = new ImageView(context);
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            imageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    move(position);
-                }
-            });
         }
         else
         {
@@ -69,60 +63,14 @@ public class GridAdapter extends BaseAdapter {
         return imageView;
     }
 
-    //TODO: use buttons to indicate direction rather than calculating it on the fly
-    void move(int pos)
-    {
-
-        for (int i = 0; i < 3; i++)
-        {
-            if (pos >= 4+(i*16) && pos <= 11+(i*16))
-            {
-                bus.post(new MoveEvent(Tile.UP));
-                Toast.makeText(context, "Move forward", Toast.LENGTH_SHORT).show();
-                return;
-            }
-        }
-
-        for (int i = 12; i < 16; i++)
-        {
-            if (pos >= 4+(i*16) && pos <= 11+(i*16))
-            {
-                bus.post(new MoveEvent(Tile.DOWN));
-                Toast.makeText(context, "Move Down", Toast.LENGTH_SHORT).show();
-                return;
-            }
-        }
-
-        for (int i = 0; i < 8; i++)
-        {
-            if (pos >= (i+4)*16 && pos <= ((i+4)*16)+3 )
-            {
-                bus.post(new MoveEvent(Tile.LEFT));
-                Toast.makeText(context, "Move left", Toast.LENGTH_SHORT).show();
-                return;
-            }
-        }
-        for (int i = 0; i < 8; i++)
-        {
-            if (pos >= ( (i+4)*16)+13 && pos <= ((i+4)*16)+15 )
-            {
-                bus.post(new MoveEvent(Tile.RIGHT));
-                Toast.makeText(context, "Move right", Toast.LENGTH_SHORT).show();
-                return;
-            }
-        }
-    }
-
     @Subscribe
     public void updateGrid(Tile[][] board)
     {
         Log.d(TAG, "Updating GridView");
         tiles.clear(); //clear internal arraylist
-        int index = 0;
         for ( int i = 0; i < board.length; i++) {
             for ( int j = 0; j < board[i].length; j++) {
                 tiles.add(board[i][j]);
-                index++;
             }
         }
         this.notifyDataSetChanged(); //refresh view

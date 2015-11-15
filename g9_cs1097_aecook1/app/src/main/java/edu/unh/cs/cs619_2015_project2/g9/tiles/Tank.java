@@ -17,7 +17,7 @@ public class Tank extends Tile {
 
     public Tank(int integerRepresentation, TileUIFactory uiFactory) {
         String parsable = Integer.toString(integerRepresentation);
-        id = Integer.parseInt(parsable.substring(1, 3));
+        id = Integer.parseInt(parsable.substring(1, 4));
         life =  Integer.parseInt(parsable.substring(4, 6));
         direction = Byte.parseByte(parsable.substring(7));
 
@@ -27,5 +27,18 @@ public class Tank extends Tile {
         this.setUI(ui);
     }
 
-    public Tank() {};
+    @Override
+    public int getType() {
+        return this.TANK;
+    }
+
+    public int getDirection()
+    {
+        return direction;
+    }
+    @Override
+    public int getId()
+    {
+        return id;
+    }
 }

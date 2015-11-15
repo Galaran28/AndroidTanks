@@ -5,6 +5,9 @@ import android.widget.Toast;
 
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.rest.RestService;
+
+import edu.unh.cs.cs619_2015_project2.g9.rest.BulletZoneRestClient;
 
 import edu.unh.cs.cs619_2015_project2.g9.ui.TileUIFactory;
 
@@ -43,5 +46,9 @@ public class TileFactory {
         }
 
        return ret;
+
+
+
+
     }
 }

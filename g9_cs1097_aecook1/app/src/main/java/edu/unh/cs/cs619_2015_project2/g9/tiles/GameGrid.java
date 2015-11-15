@@ -1,5 +1,6 @@
 package edu.unh.cs.cs619_2015_project2.g9.tiles;
 
+import android.app.Activity;
 import android.os.SystemClock;
 import android.util.Log;
 
@@ -17,9 +18,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import edu.unh.cs.cs619_2015_project2.g9.events.FireEvent;
-import edu.unh.cs.cs619_2015_project2.g9.events.MoveEvent;
-import edu.unh.cs.cs619_2015_project2.g9.events.TurnEvent;
+import edu.unh.cs.cs619_2015_project2.g9.TankClientActivity;
 import edu.unh.cs.cs619_2015_project2.g9.rest.BulletZoneRestClient;
 import edu.unh.cs.cs619_2015_project2.g9.rest.PollerTask;
 import edu.unh.cs.cs619_2015_project2.g9.tiles.Tile;
@@ -44,6 +43,9 @@ public class GameGrid {
 
     private long tankId;
     private boolean hasFired, hasMoved, hasTurned;
+    private int missilesFired = 0;
+    private boolean playerAlive = true;
+    private byte playerDirection;
 
     @Bean
     protected OttoBus bus;
@@ -71,10 +73,8 @@ public class GameGrid {
 
         // update board every POL_INTERVAL milliseconds
         poller.doPoll(POL_INTERVAL);
-
         // allow movement actions every MOVE_INTERVAL milliseconds
         this.doMoveTracker();
-
         // allow tank to fire after FIRE_INTERVAL milliseconds
         this.doFireTracker();
 
@@ -98,11 +98,16 @@ public class GameGrid {
         // TODO; add constraints, tank can only move in the direction its facing
         Log.d(TAG, "Moving....");
 
-        if (!hasMoved) {
+        if (!hasMoved && playerAlive) {
             Log.d(TAG, "Move allowed");
-          //  if ( )
-            restClient.move(tankId, m.direction);
-            hasMoved = true;
+            if (playerDirection == direction) {
+                restClient.move(tankId, direction);
+                hasMoved = true;
+            }
+            else
+            {
+                turn (direction);
+            }
         }
     }
 
@@ -110,7 +115,7 @@ public class GameGrid {
     @Subscribe
     public void turn(TurnEvent t) {
         Log.d(TAG, "Turning....");
-        if (!hasTurned) {
+        if (!hasTurned && playerAlive) {
             Log.d(TAG, "Turning allowed");
             restClient.turn(tankId, t.direction);
             hasMoved = true;
@@ -121,12 +126,30 @@ public class GameGrid {
     public void parseGrid(GridWrapper gw) {
         Log.d(TAG, "parsing grid to Tile array");
         Tile[][] board = new Tile[x][y];
+        int missiles = 0;
+        boolean foundPlayer = false;
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
-                board[i][j] = factory.createTile(gw.getGrid()[i][j]);
-            }
-        }
+             //   Log.e(TAG, "invalid value in grid " + gw.getGrid()[i][j]);
+                board[i][j] = factory.createTile(gw.getGrid()[i][j], tankId);
+                if (board[i][j].getType() == Tile.BULLET) {
+                    missiles++;
+                }
+                if (board[i][j].getType() == Tile.PLAYER){
+                    foundPlayer = true;
+                    playerAlive = true;
+                    playerDirection = (byte)board[i][j].getDirection();
 
+                }
+            }
+
+        }
+        if (!foundPlayer) {
+            playerAlive = false;
+          //  Log.e(TAG, "could not find player: " + tankId);
+         //   restClient.leave(tankId);
+        }
+        missilesFired = missiles;
         bus.post(board);
     }
 
@@ -146,4 +169,8 @@ public class GameGrid {
             SystemClock.sleep(FIRE_INTERVAL);
         }
     }
+<<<<<<< HEAD:g9_cs1097_aecook1/app/src/main/java/edu/unh/cs/cs619_2015_project2/g9/tiles/GameGrid.java
+=======
+
+>>>>>>> alextank:g9_cs1097_aecook1/app/src/main/java/edu/unh/cs/cs619_2015_project2/g9/GameGrid.java
 }

@@ -1,0 +1,56 @@
+package edu.unh.cs.cs619_2015_project2.g9.tiles;
+
+import android.graphics.drawable.Drawable;
+
+import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.EBean;
+
+import edu.unh.cs.cs619_2015_project2.g9.ui.TileUI;
+import edu.unh.cs.cs619_2015_project2.g9.ui.TileUIFactory;
+
+/**
+ * Tile base class
+ *
+ * @Author Chris Sleys
+ */
+public class Tile {
+<<<<<<< HEAD
+    public static final byte UP = 0;
+    public static final byte DOWN = 4;
+    public static final byte LEFT = 6;
+    public static final byte RIGHT = 2;
+
+    private TileUI ui;
+    private byte rotation = this.UP;
+
+    public Tile() {};
+    public Tile(TileUIFactory uiFactory) {
+        setUI(uiFactory.getBlank());
+    }
+
+    public TileUI getUI() {
+        return ui;
+    }
+=======
+    public static final int TILE = 0;
+    public static final int WALL = 1;
+    public static final int BULLET = 2;
+    public static final int TANK = 3;
+    public static final int PLAYER = 4;
+>>>>>>> alextank
+
+    public void setUI(TileUI ui) {
+       this.ui = ui;
+    }
+<<<<<<< HEAD
+=======
+    public int getDirection()
+    {
+        return 0;
+    };
+    public int getId()
+    {
+        return 0;
+    };
+>>>>>>> alextank
+}
