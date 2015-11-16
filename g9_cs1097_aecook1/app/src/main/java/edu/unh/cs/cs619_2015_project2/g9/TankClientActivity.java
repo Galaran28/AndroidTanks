@@ -48,7 +48,7 @@ public class TankClientActivity extends AppCompatActivity  {
     @ViewById
     GridView gridview;
 
-    private SensorManager mSensorManager;
+    private SensorManager shakeSensor;
     private float mAccel; // acceleration apart from gravity
     private float mAccelCurrent; // current acceleration including gravity
     private float mAccelLast; // last acceleration including gravity
@@ -59,19 +59,23 @@ public class TankClientActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_main);
 
-        mSensorManager = (SensorManager) getSystemService(getApplicationContext().SENSOR_SERVICE);
-        mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+        shakeSensor = (SensorManager) getSystemService(getApplicationContext().SENSOR_SERVICE);
+        shakeSensor.registerListener(mSensorListener, shakeSensor.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
         mAccel = 0.00f;
         mAccelCurrent = SensorManager.GRAVITY_EARTH;
         mAccelLast = SensorManager.GRAVITY_EARTH;
         enableImmersive();
-
 
         Toast toast = Toast.makeText(getApplicationContext(), "New Game ", Toast.LENGTH_SHORT);
         toast.show();
 
     }
 
+    /**
+     * Closes the activity when the user presses their back button
+     *
+     * @Author Alex Cook
+     */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event)
     {
@@ -82,6 +86,12 @@ public class TankClientActivity extends AppCompatActivity  {
         return super.onKeyDown(keyCode, event);
     }
 
+    /**
+     * Determines the build version and closes the status bar.
+     * Does this so image grid fills screen without having to scroll
+     *
+     * @Author Alex Cook
+     */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @SuppressLint("NewApi")
     public void enableImmersive() {
@@ -128,21 +138,41 @@ public class TankClientActivity extends AppCompatActivity  {
         }
     };
 
+    /**
+     * Registers the shakeListener and plays music when the activity resumes
+     *
+     * @Author Alex Cook
+     */
     @Override
     protected void onResume() {
         super.onResume();
         mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.game_sound_1);
         mediaPlayer.setLooping(true);
         mediaPlayer.start();
-        mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+        shakeSensor.registerListener(mSensorListener, shakeSensor.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
     }
 
+
+    /**
+     * Un-Registers the shakeListener and stops music when the activity pauses
+     *
+     * @Author Alex Cook
+     */
     @Override
     protected void onPause() {
         mediaPlayer.release();
-        mSensorManager.unregisterListener(mSensorListener);
+        shakeSensor.unregisterListener(mSensorListener);
         super.onPause();
     }
+
+
+
+    /**
+     * These 5 methods are called when the buttons in the tank activity are pressed.
+     * They call the gamegrid's move and fire methods
+     *
+     * @Author Alex Cook
+     */
 
     @Background
     @Click(R.id.down)
