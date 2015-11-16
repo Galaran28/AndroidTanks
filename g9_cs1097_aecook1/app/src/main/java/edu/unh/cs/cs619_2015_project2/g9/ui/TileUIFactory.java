@@ -1,8 +1,6 @@
 package edu.unh.cs.cs619_2015_project2.g9.ui;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.support.v4.content.ContextCompat;
 
 import org.androidannotations.annotations.EBean;
@@ -19,23 +17,14 @@ public class TileUIFactory {
     @RootContext
     Context root;
 
-    TileUI base;
+    public TileUI getBullet() { return createTile(R.mipmap.missile_4); }
+    public TileUI getWallUnbreakable() { return createTile(R.mipmap.breakable_wall); }
+    public TileUI getWallBreakable() { return createTile(R.mipmap.breakable_wall); }
+    public TileUI getTank() { return createTile(R.mipmap.enemy_up); }
+    public TileUI getPlayer() { return createTile(R.mipmap.player_up_1); }
+    public TileUI getBlank() { return createTile(R.mipmap.tile_base); }
 
-    public TileUIFactory() {
-        base = new TileUI();
-        base.setImage(new ColorDrawable(Color.TRANSPARENT));
-    }
-
-    public TileUI getBullet() { return creatTile(R.drawable.bullet); }
-    public TileUI getWallUnbreakable() { return creatTile(R.drawable.wall_unbreakable); }
-    public TileUI getWallBreakable() { return creatTile(R.drawable.wall_breakable); }
-    public TileUI getTank() { return creatTile(R.drawable.tank_forward); }
-    public TileUI getPerson() { return creatTile(R.drawable.our_tank); }
-    public TileUI getBlank() {
-        return base;
-    }
-
-    private TileUI creatTile(int drawable) {
+    private TileUI createTile(int drawable) {
         TileUI ui = new TileUI();
         ui.setImage(ContextCompat.getDrawable(root, drawable));
         return ui;

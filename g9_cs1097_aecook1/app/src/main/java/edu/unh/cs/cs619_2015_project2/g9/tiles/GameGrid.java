@@ -19,6 +19,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import edu.unh.cs.cs619_2015_project2.g9.TankClientActivity;
+import edu.unh.cs.cs619_2015_project2.g9.events.FireEvent;
+import edu.unh.cs.cs619_2015_project2.g9.events.MoveEvent;
+import edu.unh.cs.cs619_2015_project2.g9.events.TurnEvent;
 import edu.unh.cs.cs619_2015_project2.g9.rest.BulletZoneRestClient;
 import edu.unh.cs.cs619_2015_project2.g9.rest.PollerTask;
 import edu.unh.cs.cs619_2015_project2.g9.tiles.Tile;
@@ -38,6 +41,7 @@ public class GameGrid {
     public static final int POL_INTERVAL = 100;
     public static final int MOVE_INTERVAL = 500;
     public static final int FIRE_INTERVAL = 500;
+    public static final int MAX_BULLETS = 2;
     public static final int x = 16;
     public static final int y = 16;
 
@@ -82,49 +86,42 @@ public class GameGrid {
 
     /**
      * Calls the rest client's fire bullet
-     * This is called from the tank activity
      * Will only perform action if player is alive and there are less than 2 bullets
      *
-     * @Author Cris Sleys
-     * Edited by Alex
+     * @Author Chris Sleys
+     * @Author Alex Cook
      */
     @Background
     @Subscribe
     public void fireBullet(FireEvent f) {
         // TODO: keep track of bullets, cannot fire if 2 or more bullets already exist
-        Log.d(TAG, "Firing....");
-        if (!hasFired) {
-            Log.d(TAG, "Fire allowed....");
+        Log.i(TAG, "Firing....");
+        if (!hasFired && missilesFired < MAX_BULLETS) {
+            Log.i(TAG, "Fire allowed....");
             restClient.fire(tankId);
             hasFired = true;
         }
     }
 
     /**
-     * Calls the rest client's move
-     * This is called from the tank activity
-     * Will only perform action if player is alive and is facing the
-     * correct direction.
-     * Will call turn if the player is facing a different direction
+     * Calls the rest client's move endpoint
+     * Will only execute if the player is alive, the move is on the tanks axis, and the players move
+     * cooldown is complete
      *
-     * @Author Cris Sleys
-     * Edited by Alex
+     * @Author Chris Sleys
+     * @Author Alex Cook
      */
     @Background
     @Subscribe
     public void move(MoveEvent m) {
         // TODO; add constraints, tank can only move in the direction its facing
-        Log.d(TAG, "Moving....");
+        Log.i(TAG, "Moving....");
 
         if (!hasMoved && playerAlive) {
-            Log.d(TAG, "Move allowed");
-            if (playerDirection == direction) {
-                restClient.move(tankId, direction);
+            Log.i(TAG, "Move allowed");
+            if (playerDirection == m.direction || playerDirection == oppositeDirection(m.direction)) {
+                restClient.move(tankId, m.direction);
                 hasMoved = true;
-            }
-            else
-            {
-                turn (direction);
             }
         }
     }
@@ -140,9 +137,9 @@ public class GameGrid {
     @Background
     @Subscribe
     public void turn(TurnEvent t) {
-        Log.d(TAG, "Turning....");
+        Log.i(TAG, "Turning....");
         if (!hasTurned && playerAlive) {
-            Log.d(TAG, "Turning allowed");
+            Log.i(TAG, "Turning allowed");
             restClient.turn(tankId, t.direction);
             hasMoved = true;
         }
@@ -164,24 +161,28 @@ public class GameGrid {
         boolean foundPlayer = false;
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
-             //   Log.e(TAG, "invalid value in grid " + gw.getGrid()[i][j]);
-                board[i][j] = factory.createTile(gw.getGrid()[i][j], tankId);
-                if (board[i][j].getType() == Tile.BULLET) {
+                //   Log.e(TAG, "invalid value in grid " + gw.getGrid()[i][j]);
+                Tile t = factory.createTile(gw.getGrid()[i][j]);
+                if (t instanceof Bullet) {
                     missiles++;
                 }
-                if (board[i][j].getType() == Tile.PLAYER){
-                    foundPlayer = true;
-                    playerAlive = true;
-                    playerDirection = (byte)board[i][j].getDirection();
-
+                if (t instanceof Tank) {
+                    Tank tank = (Tank) t;
+                    if (tank.id == tankId) {
+                        tank.setPlayer();
+                        foundPlayer = true;
+                        playerAlive = true;
+                        playerDirection = tank.direction;
+                    }
                 }
-            }
 
+                board[i][j] = t;
+            }
         }
         if (!foundPlayer) {
             playerAlive = false;
-          //  Log.e(TAG, "could not find player: " + tankId);
-         //   restClient.leave(tankId);
+            //  Log.e(TAG, "could not find player: " + tankId);
+            //   restClient.leave(tankId);
         }
         missilesFired = missiles;
         bus.post(board);
@@ -203,8 +204,19 @@ public class GameGrid {
             SystemClock.sleep(FIRE_INTERVAL);
         }
     }
-<<<<<<< HEAD:g9_cs1097_aecook1/app/src/main/java/edu/unh/cs/cs619_2015_project2/g9/tiles/GameGrid.java
-=======
 
->>>>>>> alextank:g9_cs1097_aecook1/app/src/main/java/edu/unh/cs/cs619_2015_project2/g9/GameGrid.java
+    private byte oppositeDirection(byte d) {
+        switch(d) {
+            case Tile.UP:
+                return Tile.DOWN;
+            case Tile.DOWN:
+                return Tile.UP;
+            case Tile.LEFT:
+                return Tile.RIGHT;
+            case Tile.RIGHT:
+                return Tile.LEFT;
+            default:
+                return 100;
+        }
+    }
 }

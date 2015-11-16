@@ -20,7 +20,6 @@ public class Tile {
     public static final byte RIGHT = 2;
 
     private TileUI ui;
-    private byte rotation = this.UP;
 
     public Tile() {};
     public Tile(TileUIFactory uiFactory) {

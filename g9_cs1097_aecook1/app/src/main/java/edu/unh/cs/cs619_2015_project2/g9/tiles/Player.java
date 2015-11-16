@@ -1,34 +1,20 @@
 package edu.unh.cs.cs619_2015_project2.g9.tiles;
 
+import edu.unh.cs.cs619_2015_project2.g9.ui.TileUI;
+import edu.unh.cs.cs619_2015_project2.g9.ui.TileUIFactory;
+
 /**
  * A tile representing a player
  *
  * @Author Alex Cook
  */
-public class Player extends Tile {
-    public int life;
-    public int direction;
-    public int id;
+public class Player extends Tank {
 
-    public Player(int integerRepresentation) {
-        String parsable = Integer.toString(integerRepresentation);
-        id = Integer.parseInt(parsable.substring(1, 4));
-        life =  Integer.parseInt(parsable.substring(4, 6));
-        direction = Integer.parseInt(parsable.substring(7));
-    }
+    public Player(int integerRepresentation, TileUIFactory uiFactory) {
+        super(integerRepresentation, uiFactory);
 
-    @Override
-    public int getType() {
-        return this.PLAYER;
-    }
-
-    public int getDirection()
-    {
-        return direction;
-    }
-
-    public int getId()
-    {
-        return id;
+        TileUI ui = uiFactory.getPlayer();
+        ui.setRotation(this.direction);
+        this.setUI(ui);
     }
 }

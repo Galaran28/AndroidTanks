@@ -46,9 +46,5 @@ public class TileFactory {
         }
 
        return ret;
-
-
-
-
     }
 }

@@ -14,31 +14,28 @@ public class Tank extends Tile {
     public int life;
     public byte direction;
     public int id;
+    public boolean player;
+
+    TileUIFactory uiFactory;
 
     public Tank(int integerRepresentation, TileUIFactory uiFactory) {
         String parsable = Integer.toString(integerRepresentation);
         id = Integer.parseInt(parsable.substring(1, 4));
         life =  Integer.parseInt(parsable.substring(4, 6));
         direction = Byte.parseByte(parsable.substring(7));
+        player = false;
 
-        this.setUI(uiFactory.getTank());
         TileUI ui = uiFactory.getTank();
         ui.setRotation(direction);
         this.setUI(ui);
+
+        this.uiFactory = uiFactory; // store a reference incase we need to update the ui
     }
 
-    @Override
-    public int getType() {
-        return this.TANK;
-    }
-
-    public int getDirection()
-    {
-        return direction;
-    }
-    @Override
-    public int getId()
-    {
-        return id;
+    public void setPlayer() {
+        player = true;
+        TileUI ui = uiFactory.getPlayer();
+        ui.setRotation(this.direction);
+        this.setUI(ui);
     }
 }

@@ -45,7 +45,7 @@ public class GridAdapter extends BaseAdapter {
     // create a new ImageView for each item referenced by the Adapter
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        Log.d(TAG, "getView");
+        //Log.d(TAG, "getView");
         final ImageView imageView;
 
         if (convertView == null) {

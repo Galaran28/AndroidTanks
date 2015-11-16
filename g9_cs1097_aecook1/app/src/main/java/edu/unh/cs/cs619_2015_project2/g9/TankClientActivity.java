@@ -20,11 +20,15 @@ import android.widget.Toast;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
 
 import edu.unh.cs.cs619_2015_project2.g9.events.FireEvent;
+import edu.unh.cs.cs619_2015_project2.g9.events.MoveEvent;
+import edu.unh.cs.cs619_2015_project2.g9.events.TurnEvent;
 import edu.unh.cs.cs619_2015_project2.g9.tiles.GameGrid;
+import edu.unh.cs.cs619_2015_project2.g9.tiles.Tile;
 import edu.unh.cs.cs619_2015_project2.g9.ui.GridAdapter;
 import edu.unh.cs.cs619_2015_project2.g9.ui.TileUIFactory;
 import edu.unh.cs.cs619_2015_project2.g9.util.OttoBus;
@@ -54,10 +58,9 @@ public class TankClientActivity extends AppCompatActivity  {
     private float mAccelLast; // last acceleration including gravity
     public static MediaPlayer mediaPlayer;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.content_main);
+    @AfterViews
+    public void afterView() {
+        gridview.setAdapter(gridAdapter);
 
         shakeSensor = (SensorManager) getSystemService(getApplicationContext().SENSOR_SERVICE);
         shakeSensor.registerListener(mSensorListener, shakeSensor.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
@@ -108,12 +111,6 @@ public class TankClientActivity extends AppCompatActivity  {
             newUiOptions ^= View.SYSTEM_UI_FLAG_IMMERSIVE;
         }
         getWindow().getDecorView().setSystemUiVisibility(newUiOptions);
-    }
-
-
-    @AfterViews
-    void afterView() {
-        gridview.setAdapter(gridAdapter);
     }
 
 
@@ -177,30 +174,30 @@ public class TankClientActivity extends AppCompatActivity  {
     @Background
     @Click(R.id.down)
     void downClicked() {
-        game.move(game.DOWN);
+        bus.post(new MoveEvent(Tile.DOWN));
     }
 
     @Background
     @Click(R.id.up)
     void upClicked(){
-        game.move(game.UP);
+        bus.post(new MoveEvent(Tile.UP));
     }
 
     @Background
     @Click(R.id.left)
     void leftClicked(){
-        game.move(game.LEFT);
+        bus.post(new TurnEvent(Tile.LEFT));
     }
 
     @Background
-         @Click(R.id.right)
-         void rightClicked(){
-        game.move(game.RIGHT);
+    @Click(R.id.right)
+    void rightClicked(){
+        bus.post(new TurnEvent(Tile.RIGHT));
     }
 
     @Background
     @Click(R.id.fire)
     void fireClicked(){
-        game.fireBullet();
+       bus.post(new FireEvent());
     }
 }
