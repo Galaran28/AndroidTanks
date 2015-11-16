@@ -22,6 +22,7 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.LongClick;
 import org.androidannotations.annotations.ViewById;
 
 import edu.unh.cs.cs619_2015_project2.g9.events.FireEvent;
@@ -172,26 +173,26 @@ public class TankClientActivity extends AppCompatActivity  {
      */
 
     @Background
-    @Click(R.id.down)
-    void downClicked() {
-        bus.post(new MoveEvent(Tile.DOWN));
-    }
-
-    @Background
-    @Click(R.id.up)
-    void upClicked(){
-        bus.post(new MoveEvent(Tile.UP));
-    }
-
-    @Background
     @Click(R.id.left)
     void leftClicked(){
-        bus.post(new TurnEvent(Tile.LEFT));
+        bus.post(new MoveEvent(Tile.DOWN));
     }
 
     @Background
     @Click(R.id.right)
     void rightClicked(){
+        bus.post(new MoveEvent(Tile.UP));
+    }
+
+    @Background
+    @LongClick(R.id.left)
+    void leftLongClicked(){
+        bus.post(new TurnEvent(Tile.LEFT));
+    }
+
+    @Background
+    @LongClick(R.id.right)
+    void rightLongClicked(){
         bus.post(new TurnEvent(Tile.RIGHT));
     }
 

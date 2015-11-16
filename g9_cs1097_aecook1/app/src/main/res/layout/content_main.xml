@@ -23,48 +23,35 @@
         android:focusable="true"
         android:focusableInTouchMode="true"
         />
-    <Button
-        android:id="@+id/up"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:background="@android:color/transparent"
-        />
+
     <Button
         android:id="@+id/left"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:text=""
-        android:layout_above="@+id/down"
-        android:layout_below="@+id/up"
-        android:background="@android:color/transparent"/>
-    <Button
-        android:id="@+id/down"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:layout_alignParentBottom="true"
+        android:background="@android:color/transparent"
+        android:layout_toLeftOf="@+id/fire"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:background="@android:color/transparent"/>
+        android:layout_alignParentStart="true" />
+
     <Button
         android:id="@+id/right"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:text=""
-        android:layout_above="@+id/down"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/left"
-        android:background="@android:color/transparent"/>
+        android:background="@android:color/transparent"
+        android:layout_toRightOf="@+id/fire"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:text=""
         android:id="@+id/fire"
-        android:layout_below="@+id/up"
+        android:background="@android:color/transparent"
         android:layout_centerHorizontal="true"
-        android:layout_alignBottom="@+id/left"
-        android:background="@android:color/transparent"/>
+        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true" />
 </RelativeLayout>

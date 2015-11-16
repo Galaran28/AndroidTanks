@@ -114,15 +114,16 @@ public class GameGrid {
     @Background
     @Subscribe
     public void move(MoveEvent m) {
-        // TODO; add constraints, tank can only move in the direction its facing
         Log.i(TAG, "Moving....");
 
         if (!hasMoved && playerAlive) {
             Log.i(TAG, "Move allowed");
-            if (playerDirection == m.direction || playerDirection == oppositeDirection(m.direction)) {
-                restClient.move(tankId, m.direction);
-                hasMoved = true;
+            if (m.direction == Tile.UP) {
+                restClient.move(tankId, playerDirection);
+            } else {
+                restClient.move(tankId, oppositeDirection(playerDirection));
             }
+            hasMoved = true;
         }
     }
 
@@ -140,7 +141,11 @@ public class GameGrid {
         Log.i(TAG, "Turning....");
         if (!hasTurned && playerAlive) {
             Log.i(TAG, "Turning allowed");
-            restClient.turn(tankId, t.direction);
+            if (t.direction == Tile.LEFT) {
+                restClient.turn(tankId, getLeftDir(playerDirection));
+            } else {
+                restClient.turn(tankId, getRightDir(playerDirection));
+            }
             hasMoved = true;
         }
     }
@@ -218,5 +223,24 @@ public class GameGrid {
             default:
                 return 100;
         }
+    }
+
+    private byte getLeftDir(byte d) {
+        switch(d) {
+            case Tile.UP:
+                return Tile.LEFT;
+            case Tile.DOWN:
+                return Tile.RIGHT;
+            case Tile.LEFT:
+                return Tile.DOWN;
+            case Tile.RIGHT:
+                return Tile.UP;
+            default:
+                return 100;
+        }
+    }
+
+    private byte getRightDir(byte d) {
+        return oppositeDirection(getRightDir(d));
     }
 }
