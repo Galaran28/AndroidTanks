@@ -10,6 +10,7 @@ import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Menu;
@@ -175,26 +176,31 @@ public class TankClientActivity extends AppCompatActivity  {
     @Background
     @Click(R.id.left)
     void leftClicked(){
-        bus.post(new MoveEvent(Tile.DOWN));
+        Log.i(TAG, "leftClicked");
+        bus.post(new MoveEvent(Tile.LEFT));
     }
 
     @Background
     @Click(R.id.right)
     void rightClicked(){
+        Log.i(TAG, "rightClicked");
+        bus.post(new MoveEvent(Tile.RIGHT));
+    }
+
+    @Background
+    @Click(R.id.up)
+    void upClicked(){
+        Log.i(TAG, "upClicked");
         bus.post(new MoveEvent(Tile.UP));
     }
 
     @Background
-    @LongClick(R.id.left)
-    void leftLongClicked(){
-        bus.post(new TurnEvent(Tile.LEFT));
+    @Click(R.id.down)
+    void downClicked(){
+        Log.i(TAG, "downClicked");
+        bus.post(new MoveEvent(Tile.DOWN));
     }
 
-    @Background
-    @LongClick(R.id.right)
-    void rightLongClicked(){
-        bus.post(new TurnEvent(Tile.RIGHT));
-    }
 
     @Background
     @Click(R.id.fire)

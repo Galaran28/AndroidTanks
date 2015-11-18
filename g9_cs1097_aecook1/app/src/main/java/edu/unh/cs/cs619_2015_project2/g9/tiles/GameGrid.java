@@ -118,12 +118,12 @@ public class GameGrid {
 
         if (!hasMoved && playerAlive) {
             Log.i(TAG, "Move allowed");
-            if (m.direction == Tile.UP) {
-                restClient.move(tankId, playerDirection);
+            if (m.direction == playerDirection || m.direction == oppositeDirection(playerDirection)) {
+                restClient.move(tankId, m.direction);
+                hasMoved = true;
             } else {
-                restClient.move(tankId, oppositeDirection(playerDirection));
+                bus.post(new TurnEvent(m.direction));
             }
-            hasMoved = true;
         }
     }
 
@@ -141,11 +141,7 @@ public class GameGrid {
         Log.i(TAG, "Turning....");
         if (!hasTurned && playerAlive) {
             Log.i(TAG, "Turning allowed");
-            if (t.direction == Tile.LEFT) {
-                restClient.turn(tankId, getLeftDir(playerDirection));
-            } else {
-                restClient.turn(tankId, getRightDir(playerDirection));
-            }
+            restClient.turn(tankId, t.direction);
             hasMoved = true;
         }
     }
