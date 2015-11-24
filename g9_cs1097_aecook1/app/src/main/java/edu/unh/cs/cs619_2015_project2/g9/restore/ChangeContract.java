@@ -3,7 +3,8 @@ package edu.unh.cs.cs619_2015_project2.g9.restore;
 import android.provider.BaseColumns;
 
 /**
- * Created by chris on 11/24/15.
+ * Define db table for storing game frames
+ * @Author Chris Sleys
  */
 public class ChangeContract {
     public ChangeContract() {}

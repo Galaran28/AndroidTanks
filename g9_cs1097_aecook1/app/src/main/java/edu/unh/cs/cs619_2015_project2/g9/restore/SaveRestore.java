@@ -2,8 +2,10 @@ package edu.unh.cs.cs619_2015_project2.g9.restore;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.SystemClock;
 import android.util.Log;
 
 import com.squareup.otto.Subscribe;
@@ -14,16 +16,21 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.RootContext;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.sql.Blob;
 
 import edu.unh.cs.cs619_2015_project2.g9.events.BeginReplayEvent;
 import edu.unh.cs.cs619_2015_project2.g9.util.GridWrapper;
 import edu.unh.cs.cs619_2015_project2.g9.util.OttoBus;
 
 /**
- * Created by chris on 11/24/15.
+ * Reads and writes changes from and to the SQLite DB
+ * @Author Chris Sleys
  */
 @EBean(scope = EBean.Scope.Singleton)
 public class SaveRestore {
@@ -34,6 +41,7 @@ public class SaveRestore {
     OttoBus bus;
 
     int[][] current;
+    boolean restoring = false;
     ChangeDBHelper dbHelper;
 
     @AfterInject
@@ -45,21 +53,20 @@ public class SaveRestore {
         bus.register(this);
     }
 
+    /**
+     * Capture Gamechange events and write them to the db.
+     * @param gc A list of change to the board
+     */
     @Subscribe
     @Background
-    public void saveFrame(GridWrapper gw) {
-        int[][] next = gw.getGrid();
-        if (next == null) { return; } // no data to write
-        GridChange changes = diff(next);
-        if (changes.length() <= 0) { return; } // no changes to record
-        changes.timestamp = gw.getTimeStamp();
-        current = next;
+    public void saveFrame(GridChange gc) {
+        if (restoring) {return;} // these events are from the restore function, ignore
 
         // serilize frame
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try {
             ObjectOutputStream out = new ObjectOutputStream(bos);
-            out.writeObject(changes);
+            out.writeObject(gc);
             out.close();
         } catch(IOException ioe) {
             Log.e("serializeObject", "error", ioe);
@@ -79,24 +86,69 @@ public class SaveRestore {
         Log.i("dbWrite", "wrote row " + newRowId + " to db");
     }
 
+    /**
+     * When signaled by a event, start reading the frames from the db and publishing them to the
+     * bus. The replay event contains the scaling factor for the delays between publishing
+     * @param e ReplyEvent with the scaling factor
+     */
     @Subscribe
     @Background
-    public void restoreFrame(BeginReplayEvent e) {
-        // TODO read from sqlite db
-        // TODO post gridwappers at defined interval
+    public void restoreFrames(BeginReplayEvent e) {
+        restoring = true; // signal that the change events are coming from the db
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        String[] projection = {
+                ChangeContract.ChangeRow.COLUMN_NAME_CHANGE_BLOB
+        };
+
+        String sortOrder =
+                ChangeContract.ChangeRow._ID + " ASC";
+
+        Cursor c = db.query(
+                ChangeContract.ChangeRow.TABLE_NAME,    // The table to query
+                projection,                             // The columns to return
+                null,                                   // return all rows
+                null,                                   // params for previous where clause
+                null,                                   // don't group the rows
+                null,                                   // don't filter by row groups
+                sortOrder                               // The sort order
+        );
+
+        // read all the frames from the db in sequence
+        c.moveToFirst();
+        GridChange current, next;
+        long sleepTime;
+        current = decode(c.getBlob(c.getColumnIndex(ChangeContract.ChangeRow.COLUMN_NAME_CHANGE_BLOB)));
+        while(!c.isLast()) {
+            next = decode(c.getBlob(c.getColumnIndex(ChangeContract.ChangeRow.COLUMN_NAME_CHANGE_BLOB)));
+            bus.post(current);
+            sleepTime = (next.timestamp - current.timestamp)/e.speedFactor;
+            current = next;
+            SystemClock.sleep(sleepTime);
+        }
+
+        restoring = false; // singnal that frames are no longer from the db
     }
 
-    private GridChange diff(int[][] next) {
-        GridChange changes = new GridChange();
-        for (int i = 0; i < current.length; i++) {
-            for (int j = 0; j < current[i].length; j++) {
-                if (current[i][j] == next[i][j]) {
-                    continue;
-                }
-
-               changes.add(new ElementChange(i, j, next[i][j]));
-            }
+    /**
+     * Decode a blob from the db into a GridChange object
+     * @param b Blob of data
+     * @return GridChange object
+     */
+    private GridChange decode(byte[] b) {
+        // read and deserilize object
+        GridChange gc;
+        try {
+            ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(b));
+            gc = (GridChange) in.readObject();
+            in.close();
+            return gc;
+        } catch(ClassNotFoundException cnfe) {
+            Log.e("deserializeObject", "class not found error", cnfe);
+            return null;
+        } catch(IOException ioe) {
+            Log.e("deserializeObject", "io error", ioe);
+            return null;
         }
-        return changes;
     }
 }

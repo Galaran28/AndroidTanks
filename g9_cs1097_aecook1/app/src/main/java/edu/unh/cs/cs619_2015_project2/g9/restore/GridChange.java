@@ -4,7 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- * Created by chris on 11/24/15.
+ * Represents a list of ElementChanges found in a single grid update
+ * @Author Chris Sleys
  */
 public class GridChange implements Serializable{
     public ArrayList<ElementChange> changes;

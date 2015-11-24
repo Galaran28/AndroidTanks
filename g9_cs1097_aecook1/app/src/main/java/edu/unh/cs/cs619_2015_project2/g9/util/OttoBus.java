@@ -5,6 +5,10 @@ import com.squareup.otto.ThreadEnforcer;
 
 import org.androidannotations.annotations.EBean;
 
+/**
+ * Single pool, singleton object bus
+ * @Author Chris Sleys
+ */
 @EBean(scope = EBean.Scope.Singleton)
 public class OttoBus extends Bus {
     public OttoBus() {

@@ -14,6 +14,7 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.rest.RestService;
 import org.springframework.web.client.RestClientException;
 
+import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -24,15 +25,19 @@ import edu.unh.cs.cs619_2015_project2.g9.events.MoveEvent;
 import edu.unh.cs.cs619_2015_project2.g9.events.TurnEvent;
 import edu.unh.cs.cs619_2015_project2.g9.rest.BulletZoneRestClient;
 import edu.unh.cs.cs619_2015_project2.g9.rest.PollerTask;
+import edu.unh.cs.cs619_2015_project2.g9.restore.ElementChange;
+import edu.unh.cs.cs619_2015_project2.g9.restore.GridChange;
 import edu.unh.cs.cs619_2015_project2.g9.tiles.Tile;
 import edu.unh.cs.cs619_2015_project2.g9.tiles.TileFactory;
 import edu.unh.cs.cs619_2015_project2.g9.util.GridWrapper;
 import edu.unh.cs.cs619_2015_project2.g9.util.OttoBus;
 
 /**
- * GameGrid represents the game board
+ * GameGrid represents the game board, applues contraines, and executes game events such as move
+ * and shoot
  *
  * @Author Chris Sleys
+ * @Author Alex Cook
  */
 @EBean
 public class GameGrid {
@@ -50,6 +55,7 @@ public class GameGrid {
     private int missilesFired = 0;
     private boolean playerAlive = true;
     private byte playerDirection;
+    private Tile[][] board;
 
     @Bean
     protected OttoBus bus;
@@ -67,6 +73,13 @@ public class GameGrid {
     @Background
     protected void afterInjection() {
         Log.d(TAG, "afterInjection");
+
+        // initilize array with blank tiles
+        board = new Tile[x][y];
+        for (Tile[] t : board) {
+            Arrays.fill(t, factory.createTile(0));
+        }
+
         bus.register(this);
 
         try {
@@ -86,7 +99,7 @@ public class GameGrid {
 
     /**
      * Calls the rest client's fire bullet
-     * Will only perform action if player is alive and there are less than 2 bullets
+     * Will only perform action if player is alive and they have not exceeded MAX_BULLETS
      *
      * @Author Chris Sleys
      * @Author Alex Cook
@@ -132,8 +145,8 @@ public class GameGrid {
      * This is called from the gamegrid move method
      * Will only perform action if player is alive and can make movements
      *
-     * @Author Cris Sleys
-     * Edited by Alex
+     * @Author Chris Sleys
+     * @Author Alex Cook
      */
     @Background
     @Subscribe
@@ -148,22 +161,30 @@ public class GameGrid {
 
 
     /**
+     * Takes in a list of changes to the grid and generates tile objects for the various possible
+     * values. It also scans the board for various tile tyes, such as the number of bullets fired
+     * by our tank ID.
      *
-     * NOT SURE WHERE CALLED FROM
-     *
-     *
-     *
+     * @Author Chris Sleys
+     * @Author Alex Cook
+     * @param gc A GridChange object representing any alterations to the grid since the last update
      */
     @Subscribe
-    public void parseGrid(GridWrapper gw) {
+    public void parseGrid(GridChange gc) {
         Log.d(TAG, "parsing grid to Tile array");
-        Tile[][] board = new Tile[x][y];
         int missiles = 0;
         boolean foundPlayer = false;
+
+        // apply changes to board
+       for (ElementChange e : gc.changes) {
+           board[e.x][e.y] = factory.createTile(e.gridInt);
+       }
+
+        // TODO refactor this shit
+        // scan board and update stats
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
-                //   Log.e(TAG, "invalid value in grid " + gw.getGrid()[i][j]);
-                Tile t = factory.createTile(gw.getGrid()[i][j]);
+                Tile t = board[i][j];
                 if (t instanceof Bullet) {
                     if (((Bullet)t).sourceTank == tankId) {
                         missiles++;
@@ -191,6 +212,10 @@ public class GameGrid {
         bus.post(board);
     }
 
+    /**
+     * Resets the move and turn locks after the appropriate interval
+     * @Author Chris Sleys
+     */
     @Background
     public void doMoveTracker() {
         while(true) {
@@ -200,6 +225,10 @@ public class GameGrid {
         }
     }
 
+    /**
+     * Rests the fire lock after the appropriate interval
+     * @Author Chris Sleys
+     */
     @Background
     public void doFireTracker() {
         while(true) {
@@ -208,6 +237,13 @@ public class GameGrid {
         }
     }
 
+    /**
+     * Given a byte that matches the enums found in the Tile class, return the opposite direction
+     * of the input direction
+     * @param d Direction we would like to invert
+     * @return byte of the inverse direction
+     * @Author Chris Sleys
+     */
     private byte oppositeDirection(byte d) {
         switch(d) {
             case Tile.UP:
@@ -221,24 +257,5 @@ public class GameGrid {
             default:
                 return 100;
         }
-    }
-
-    private byte getLeftDir(byte d) {
-        switch(d) {
-            case Tile.UP:
-                return Tile.LEFT;
-            case Tile.DOWN:
-                return Tile.RIGHT;
-            case Tile.LEFT:
-                return Tile.DOWN;
-            case Tile.RIGHT:
-                return Tile.UP;
-            default:
-                return 100;
-        }
-    }
-
-    private byte getRightDir(byte d) {
-        return oppositeDirection(getRightDir(d));
     }
 }

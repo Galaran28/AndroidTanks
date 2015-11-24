@@ -27,7 +27,7 @@ public class TileFactory {
      * Take in the integer representations of the tiles and generates the correct tile object
      *
      * @param integerRepresentation integer form of the object
-     * @return
+     * @return A Tile object represented by the input integer
      */
     public Tile createTile(int integerRepresentation) {
         Tile ret = null;

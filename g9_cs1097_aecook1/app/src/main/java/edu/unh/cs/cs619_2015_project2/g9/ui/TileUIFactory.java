@@ -11,14 +11,15 @@ import edu.unh.cs.cs619_2015_project2.g9.R;
 import edu.unh.cs.cs619_2015_project2.g9.tiles.Tile;
 
 /**
- * Created by chris on 11/11/15.
+ * Generate UI objects based on requested tile state
+ * @Author Chris Sleys
  */
-
 @EBean(scope = EBean.Scope.Singleton)
 public class TileUIFactory {
     @RootContext
     Context root;
 
+    // cache objects for performance
     private TileUI bullet, wallUnbreakable, wallBreakable, blank;
     private TileUI tankUp, tankLeft, tankRight, tankDown;
     private TileUI playerUp, playerDown, playerRight, playerLeft;
@@ -42,6 +43,12 @@ public class TileUIFactory {
     public TileUI getBullet() { return bullet; }
     public TileUI getWallUnbreakable() { return wallUnbreakable; }
     public TileUI getWallBreakable() { return wallBreakable; }
+
+    /**
+     * Return correction image based on stated oriantation
+     * @param rotation
+     * @return UI object
+     */
     public TileUI getTank(int rotation) {
         switch (rotation) {
             case Tile.UP:

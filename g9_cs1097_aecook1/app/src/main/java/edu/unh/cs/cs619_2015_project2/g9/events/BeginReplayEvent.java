@@ -1,10 +1,11 @@
 package edu.unh.cs.cs619_2015_project2.g9.events;
 
 /**
- * Created by chris on 11/24/15.
+ * Singal the start of a replay, contains the scaling factor to determine how fast to reply
+ * @Author Chris Sleys
  */
 public class BeginReplayEvent {
-    int speedFactor;
+    public int speedFactor;
 
     public BeginReplayEvent(int speedFactor) {
         this.speedFactor = speedFactor;

@@ -6,6 +6,7 @@ package edu.unh.cs.cs619_2015_project2.g9.rest;
 
 import android.os.SystemClock;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -15,9 +16,19 @@ import org.androidannotations.annotations.rest.RestService;
 
 import android.util.Log;
 
+import edu.unh.cs.cs619_2015_project2.g9.restore.ElementChange;
+import edu.unh.cs.cs619_2015_project2.g9.restore.GridChange;
+import edu.unh.cs.cs619_2015_project2.g9.tiles.GameGrid;
 import edu.unh.cs.cs619_2015_project2.g9.util.GridWrapper;
 import edu.unh.cs.cs619_2015_project2.g9.util.OttoBus;
 
+/**
+ * PollerTask polles the Rest API at regular intervals for changes to the grid and pulishes them to
+ * the bus.
+ *
+ * @Author Chris Sleys
+ * @Author Karen Jin
+ */
 @EBean
 public class PollerTask {
     private static final String TAG = "GridPollerTask";
@@ -28,6 +39,18 @@ public class PollerTask {
     @RestService
     BulletZoneRestClient restClient;
 
+    int[][] current;
+
+    @AfterInject
+    public void init() {
+       current = new int[GameGrid.x][GameGrid.y];
+    }
+
+    /**
+     * Get new grid from API every pollInterval millisecons
+     *
+     * @param pollInterval interval in milliseconds between API calles
+     */
     @Background(id = "grid_poller_task")
     public void doPoll(int pollInterval) {
         while (true) {
@@ -36,10 +59,46 @@ public class PollerTask {
         }
     }
 
+    /**
+     * Parse a gridwrapper object and push a notifcation of changes
+     *
+     * @param gw GridWapper object from API
+     */
     @UiThread
     public void onGridUpdate(GridWrapper gw) {
         Log.d(TAG, "grid at timestamp: " + gw.getTimeStamp());
 
-        bus.post(gw);
+        int[][] next = gw.getGrid();
+        GridChange changes = diff(next);
+
+        // no changes to record
+        if (changes.length() <= 0) {
+            Log.d(TAG, "No changes");
+            return;
+        }
+        changes.timestamp = gw.getTimeStamp();
+        current = next;
+
+        bus.post(changes);
+    }
+
+    /**
+     * Determine what has changed between the new grid and the reference grid
+     *
+     * @param next new int grid
+     * @return GridChange object with list of changes
+     */
+    private GridChange diff(int[][] next) {
+        GridChange changes = new GridChange();
+        for (int i = 0; i < current.length; i++) {
+            for (int j = 0; j < current[i].length; j++) {
+                if (current[i][j] == next[i][j]) {
+                    continue;
+                }
+
+                changes.add(new ElementChange(i, j, next[i][j]));
+            }
+        }
+        return changes;
     }
 }

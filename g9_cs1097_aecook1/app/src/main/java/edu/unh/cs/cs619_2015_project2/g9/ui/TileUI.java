@@ -24,7 +24,8 @@ import edu.unh.cs.cs619_2015_project2.g9.R;
 import edu.unh.cs.cs619_2015_project2.g9.tiles.Tile;
 
 /**
- * Created by chris on 11/11/15.
+ * Represents a image UI element for a tile
+ * @Author Chris Sleys
  */
 @EBean
 public class TileUI {

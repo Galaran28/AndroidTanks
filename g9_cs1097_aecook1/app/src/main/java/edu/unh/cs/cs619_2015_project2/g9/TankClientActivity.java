@@ -205,7 +205,6 @@ public class TankClientActivity extends AppCompatActivity  {
         bus.post(new MoveEvent(Tile.DOWN));
     }
 
-
     @Background
     @Click(R.id.fire)
     void fireClicked(){

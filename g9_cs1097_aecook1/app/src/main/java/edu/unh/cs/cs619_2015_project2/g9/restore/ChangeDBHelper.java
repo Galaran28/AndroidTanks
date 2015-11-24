@@ -5,7 +5,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 /**
- * Created by chris on 11/24/15.
+ * Helper functions for manage the db
+ * @Author Chris Sleys
  */
 public class ChangeDBHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
