@@ -14,7 +14,7 @@ public class Bullet extends Tile {
 
     public Bullet(int integerRepresentation, TileUIFactory uiFactory) {
         String parsable = Integer.toString(integerRepresentation);
-        sourceTank = Integer.parseInt(parsable.substring(1, 3));
+        sourceTank = Integer.parseInt(parsable.substring(1, 4));
         damage = Integer.parseInt(parsable.substring(4, 6));
 
         this.setUI(uiFactory.getBullet());

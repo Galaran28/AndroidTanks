@@ -58,7 +58,6 @@ public class GridAdapter extends BaseAdapter {
         }
 
         imageView.setImageDrawable(tiles.get(position).getUI().display());
-        imageView.setRotation(tiles.get(position).getUI().getRotation());
         imageView.setAdjustViewBounds(true);
         return imageView;
     }

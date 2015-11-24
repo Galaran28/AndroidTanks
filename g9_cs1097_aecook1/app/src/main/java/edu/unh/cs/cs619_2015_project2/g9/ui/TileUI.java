@@ -31,7 +31,6 @@ public class TileUI {
     public static final String TAG = "TileUI";
 
     private Drawable image;
-    private float rotation;
 
     public Drawable display() {
         return image;
@@ -39,26 +38,5 @@ public class TileUI {
 
     public void setImage(Drawable image) {
         this.image = image;
-    }
-
-    public void setRotation(byte direction) {
-        switch(direction) {
-            case(Tile.UP):
-                rotation = 0;
-                break;
-            case(Tile.DOWN):
-                rotation = 180;
-                break;
-            case(Tile.LEFT):
-                rotation = 270;
-                break;
-            case(Tile.RIGHT):
-                rotation = 90;
-                break;
-        }
-    }
-
-    public float getRotation() {
-        return rotation;
     }
 }

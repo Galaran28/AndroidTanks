@@ -29,6 +29,7 @@ import org.androidannotations.annotations.ViewById;
 import edu.unh.cs.cs619_2015_project2.g9.events.FireEvent;
 import edu.unh.cs.cs619_2015_project2.g9.events.MoveEvent;
 import edu.unh.cs.cs619_2015_project2.g9.events.TurnEvent;
+import edu.unh.cs.cs619_2015_project2.g9.restore.SaveRestore;
 import edu.unh.cs.cs619_2015_project2.g9.tiles.GameGrid;
 import edu.unh.cs.cs619_2015_project2.g9.tiles.Tile;
 import edu.unh.cs.cs619_2015_project2.g9.ui.GridAdapter;
@@ -47,6 +48,9 @@ public class TankClientActivity extends AppCompatActivity  {
 
     @Bean
     TileUIFactory uiFactory;
+
+    @Bean
+    SaveRestore saveRestore;
 
     @Bean
     GridAdapter gridAdapter;

@@ -25,8 +25,8 @@ public class Tank extends Tile {
         direction = Byte.parseByte(parsable.substring(7));
         player = false;
 
-        TileUI ui = uiFactory.getTank();
-        ui.setRotation(direction);
+        TileUI ui = uiFactory.getTank(direction);
+        //ui.setRotation(direction);
         this.setUI(ui);
 
         this.uiFactory = uiFactory; // store a reference incase we need to update the ui
@@ -34,8 +34,8 @@ public class Tank extends Tile {
 
     public void setPlayer() {
         player = true;
-        TileUI ui = uiFactory.getPlayer();
-        ui.setRotation(this.direction);
+        TileUI ui = uiFactory.getPlayer(direction);
+        //ui.setRotation(this.direction);
         this.setUI(ui);
     }
 }

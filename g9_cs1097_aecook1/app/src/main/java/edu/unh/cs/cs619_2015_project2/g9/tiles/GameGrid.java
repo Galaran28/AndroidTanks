@@ -94,12 +94,12 @@ public class GameGrid {
     @Background
     @Subscribe
     public void fireBullet(FireEvent f) {
-        // TODO: keep track of bullets, cannot fire if 2 or more bullets already exist
         Log.i(TAG, "Firing....");
         if (!hasFired && missilesFired < MAX_BULLETS) {
             Log.i(TAG, "Fire allowed....");
             restClient.fire(tankId);
             hasFired = true;
+            missilesFired++;
         }
     }
 
@@ -142,7 +142,7 @@ public class GameGrid {
         if (!hasTurned && playerAlive) {
             Log.i(TAG, "Turning allowed");
             restClient.turn(tankId, t.direction);
-            hasMoved = true;
+            hasTurned = true;
         }
     }
 
@@ -165,7 +165,9 @@ public class GameGrid {
                 //   Log.e(TAG, "invalid value in grid " + gw.getGrid()[i][j]);
                 Tile t = factory.createTile(gw.getGrid()[i][j]);
                 if (t instanceof Bullet) {
-                    missiles++;
+                    if (((Bullet)t).sourceTank == tankId) {
+                        missiles++;
+                    }
                 }
                 if (t instanceof Tank) {
                     Tank tank = (Tank) t;
