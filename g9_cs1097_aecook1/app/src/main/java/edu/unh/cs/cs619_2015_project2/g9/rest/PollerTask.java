@@ -113,6 +113,11 @@ public class PollerTask {
      */
     @Subscribe
     public void suspend(BeginReplayEvent e) {
+        this.release();
+    }
+
+    public void release() {
         enabled = false;
+        bus.unregister(this);
     }
 }

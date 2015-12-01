@@ -51,7 +51,7 @@ public class GameGrid {
     public static final int y = 16;
 
     private long tankId;
-    private boolean hasFired, hasMoved, hasTurned;
+    private boolean hasFired, hasMoved, hasTurned, end;
     private int missilesFired = 0;
     private boolean playerAlive = true;
     private byte playerDirection;
@@ -73,6 +73,7 @@ public class GameGrid {
     @Background
     protected void afterInjection() {
         Log.d(TAG, "afterInjection");
+        end = false;
 
         // initilize array with blank tiles
         board = new Tile[x][y];
@@ -219,7 +220,7 @@ public class GameGrid {
      */
     @Background
     public void doMoveTracker() {
-        while(true) {
+        while(!end) {
             hasMoved = false;
             hasTurned = false;
             SystemClock.sleep(MOVE_INTERVAL);
@@ -232,7 +233,7 @@ public class GameGrid {
      */
     @Background
     public void doFireTracker() {
-        while(true) {
+        while(!end) {
             hasFired = false;
             SystemClock.sleep(FIRE_INTERVAL);
         }
@@ -258,5 +259,15 @@ public class GameGrid {
             default:
                 return 100;
         }
+    }
+
+    @Background
+    public void release() {
+        end = true;
+        poller.release();
+        poller = null;
+
+//        restClient.leave(tankId);
+        bus.unregister(this);
     }
 }

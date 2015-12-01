@@ -90,4 +90,7 @@ public class GridAdapter extends BaseAdapter {
         return 0;
     }
 
+    public void release() {
+        bus.unregister(this);
+    }
 }

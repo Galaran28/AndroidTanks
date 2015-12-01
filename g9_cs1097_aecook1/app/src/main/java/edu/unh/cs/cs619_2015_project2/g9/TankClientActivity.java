@@ -19,6 +19,7 @@ import android.widget.GridView;
 import android.widget.Toast;
 
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -27,6 +28,7 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.LongClick;
 import org.androidannotations.annotations.ViewById;
 
+import edu.unh.cs.cs619_2015_project2.g9.events.BeginReplayEvent;
 import edu.unh.cs.cs619_2015_project2.g9.events.FireEvent;
 import edu.unh.cs.cs619_2015_project2.g9.events.MoveEvent;
 import edu.unh.cs.cs619_2015_project2.g9.events.TurnEvent;
@@ -67,14 +69,17 @@ public class TankClientActivity extends AppCompatActivity  {
     private static MediaPlayer mediaPlayer;
 
     @AfterViews
-    public void afterView() {
+    public void afterViews() {
         gridview.setAdapter(gridAdapter);
-
         enableImmersive();
+    }
+
+    @AfterInject
+    public void afterInjection() {
         Bundle bundle = getIntent().getExtras();
         String message = bundle.getString("message");
         if (message.equals("replay")) {
-            bus.post(new edu.unh.cs.cs619_2015_project2.g9.events.BeginReplayEvent(1));
+            bus.post(new BeginReplayEvent(1));
             replay = true;
         }
         Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
@@ -157,6 +162,17 @@ public class TankClientActivity extends AppCompatActivity  {
         mediaPlayer.release();
         mySensorManager.unregisterListener(myShakeListener);
         super.onPause();
+    }
+
+    @Override
+    protected  void onDestroy() {
+        game.release();
+        gridAdapter.release();
+        saveRestore.release();
+        game = null;
+        gridAdapter = null;
+        saveRestore = null;
+        super.onDestroy();
     }
 
 

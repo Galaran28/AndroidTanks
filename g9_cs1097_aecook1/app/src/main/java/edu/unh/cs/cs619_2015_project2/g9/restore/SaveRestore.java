@@ -34,6 +34,7 @@ import edu.unh.cs.cs619_2015_project2.g9.util.OttoBus;
  */
 @EBean(scope = EBean.Scope.Singleton)
 public class SaveRestore {
+    public static final String TAG = "SaveRestore";
     @RootContext
     Context root;
 
@@ -94,6 +95,7 @@ public class SaveRestore {
     @Subscribe
     @Background
     public void restoreFrames(BeginReplayEvent e) {
+        Log.i(TAG, "Starting to reply from db");
         restoring = true; // signal that the change events are coming from the db
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
@@ -113,17 +115,27 @@ public class SaveRestore {
                 null,                                   // don't filter by row groups
                 sortOrder                               // The sort order
         );
-
         // read all the frames from the db in sequence
+        Log.i(TAG, "setting cursor");
         c.moveToFirst();
+        if (c.isAfterLast()) {
+            restoring = false;
+            Log.i(TAG, "Nothing in db");
+            return;
+        }
+
         GridChange current, next;
         long sleepTime;
+        Log.i(TAG, "getting first frame");
         current = decode(c.getBlob(c.getColumnIndex(ChangeContract.ChangeRow.COLUMN_NAME_CHANGE_BLOB)));
         while(!c.isLast()) {
+            Log.i(TAG, "getting next frame");
             next = decode(c.getBlob(c.getColumnIndex(ChangeContract.ChangeRow.COLUMN_NAME_CHANGE_BLOB)));
             bus.post(current);
             sleepTime = (next.timestamp - current.timestamp)/e.speedFactor;
             current = next;
+            c.moveToNext();
+            Log.i(TAG, "sleeping for " + sleepTime + " miliseconds");
             SystemClock.sleep(sleepTime);
         }
 
@@ -150,5 +162,9 @@ public class SaveRestore {
             Log.e("deserializeObject", "io error", ioe);
             return null;
         }
+    }
+
+    public void release() {
+        bus.unregister(this);
     }
 }
