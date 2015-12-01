@@ -66,10 +66,6 @@ public class HomeScreen extends AppCompatActivity {
 
             }
         });
-
-
-
-
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)

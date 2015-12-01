@@ -51,7 +51,7 @@ public class GameGrid {
     public static final int y = 16;
 
     private long tankId;
-    private boolean hasFired, hasMoved, hasTurned, end;
+    private boolean hasFired, hasMoved, hasTurned;
     private int missilesFired = 0;
     private boolean playerAlive = true;
     private byte playerDirection;
@@ -73,7 +73,6 @@ public class GameGrid {
     @Background
     protected void afterInjection() {
         Log.d(TAG, "afterInjection");
-        end = false;
 
         // initilize array with blank tiles
         board = new Tile[x][y];
@@ -91,11 +90,6 @@ public class GameGrid {
 
         // update board every POL_INTERVAL milliseconds
         poller.doPoll(POL_INTERVAL);
-        // allow movement actions every MOVE_INTERVAL milliseconds
-        this.doMoveTracker();
-        // allow tank to fire after FIRE_INTERVAL milliseconds
-        this.doFireTracker();
-
     }
 
     /**
@@ -112,9 +106,10 @@ public class GameGrid {
         if(playerAlive)
         if (!hasFired && missilesFired < MAX_BULLETS) {
             Log.i(TAG, "Fire allowed....");
-            restClient.fire(tankId);
             hasFired = true;
             missilesFired++;
+            this.fireCooldown();
+            restClient.fire(tankId);
         }
     }
 
@@ -134,8 +129,9 @@ public class GameGrid {
         if (!hasMoved && playerAlive) {
             Log.i(TAG, "Move allowed");
             if (m.direction == playerDirection || m.direction == oppositeDirection(playerDirection)) {
-                restClient.move(tankId, m.direction);
                 hasMoved = true;
+                this.moveCooldown();
+                restClient.move(tankId, m.direction);
             } else {
                 bus.post(new TurnEvent(m.direction));
             }
@@ -156,8 +152,8 @@ public class GameGrid {
         Log.i(TAG, "Turning....");
         if (!hasTurned && playerAlive) {
             Log.i(TAG, "Turning allowed");
-            restClient.turn(tankId, t.direction);
             hasTurned = true;
+            restClient.turn(tankId, t.direction);
         }
     }
 
@@ -219,12 +215,10 @@ public class GameGrid {
      * @Author Chris Sleys
      */
     @Background
-    public void doMoveTracker() {
-        while(!end) {
-            hasMoved = false;
-            hasTurned = false;
-            SystemClock.sleep(MOVE_INTERVAL);
-        }
+    public void moveCooldown() {
+        SystemClock.sleep(MOVE_INTERVAL);
+        hasMoved = false;
+        hasTurned = false;
     }
 
     /**
@@ -232,11 +226,9 @@ public class GameGrid {
      * @Author Chris Sleys
      */
     @Background
-    public void doFireTracker() {
-        while(!end) {
-            hasFired = false;
-            SystemClock.sleep(FIRE_INTERVAL);
-        }
+    public void fireCooldown() {
+        SystemClock.sleep(FIRE_INTERVAL);
+        hasFired = false;
     }
 
     /**
@@ -263,7 +255,6 @@ public class GameGrid {
 
     @Background
     public void release() {
-        end = true;
         poller.release();
         poller = null;
 

@@ -46,7 +46,7 @@ public class SaveRestore {
     ChangeDBHelper dbHelper;
 
     @AfterInject
-    public void init() {
+    public void reset() {
         dbHelper = new ChangeDBHelper(root);
         dbHelper.onDelete(dbHelper.getWritableDatabase()); // clear any previous saved games
         dbHelper.onCreate(dbHelper.getWritableDatabase());
@@ -162,9 +162,5 @@ public class SaveRestore {
             Log.e("deserializeObject", "io error", ioe);
             return null;
         }
-    }
-
-    public void release() {
-        bus.unregister(this);
     }
 }

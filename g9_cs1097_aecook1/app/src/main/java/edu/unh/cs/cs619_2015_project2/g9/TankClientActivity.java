@@ -76,11 +76,14 @@ public class TankClientActivity extends AppCompatActivity  {
 
     @AfterInject
     public void afterInjection() {
+
         Bundle bundle = getIntent().getExtras();
         String message = bundle.getString("message");
         if (message.equals("replay")) {
             bus.post(new BeginReplayEvent(1));
             replay = true;
+        } else {
+            saveRestore.reset(); // prepare db for new game
         }
         Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
         toast.show();
@@ -168,13 +171,11 @@ public class TankClientActivity extends AppCompatActivity  {
     protected  void onDestroy() {
         game.release();
         gridAdapter.release();
-        saveRestore.release();
         game = null;
         gridAdapter = null;
         saveRestore = null;
         super.onDestroy();
     }
-
 
 
     /**
