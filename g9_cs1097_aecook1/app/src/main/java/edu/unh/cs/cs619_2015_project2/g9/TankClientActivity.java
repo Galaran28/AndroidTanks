@@ -2,6 +2,7 @@ package edu.unh.cs.cs619_2015_project2.g9;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -58,33 +59,38 @@ public class TankClientActivity extends AppCompatActivity  {
     @ViewById
     GridView gridview;
 
-    private SensorManager shakeSensor;
-    private float mAccel; // acceleration apart from gravity
-    private float mAccelCurrent; // current acceleration including gravity
-    private float mAccelLast; // last acceleration including gravity
-    public static MediaPlayer mediaPlayer;
+    private SensorManager mySensorManager;
+    private Sensor mySensor;
+    private MyShakeListener myShakeListener;
+
+    private boolean replay = false;
+    private static MediaPlayer mediaPlayer;
 
     @AfterViews
     public void afterView() {
         gridview.setAdapter(gridAdapter);
 
-        shakeSensor = (SensorManager) getSystemService(getApplicationContext().SENSOR_SERVICE);
-        shakeSensor.registerListener(mSensorListener, shakeSensor.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
-        mAccel = 0.00f;
-        mAccelCurrent = SensorManager.GRAVITY_EARTH;
-        mAccelLast = SensorManager.GRAVITY_EARTH;
         enableImmersive();
-
         Bundle bundle = getIntent().getExtras();
         String message = bundle.getString("message");
-
-        if (message.equals("replay"))
+        if (message.equals("replay")) {
             bus.post(new edu.unh.cs.cs619_2015_project2.g9.events.BeginReplayEvent(1));
-
+            replay = true;
+        }
         Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
         toast.show();
 
-    }
+        mySensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mySensor = mySensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        myShakeListener = new MyShakeListener();
+        myShakeListener.setOnShakeListener(new MyShakeListener.OnShakeListener() {
+            @Override
+            public void onShake(int count) {
+                if(!replay)
+                    bus.post(new FireEvent());
+            }
+        });
+     }
 
     /**
      * Closes the activity when the user presses their back button
@@ -126,27 +132,6 @@ public class TankClientActivity extends AppCompatActivity  {
     }
 
 
-    private final SensorEventListener mSensorListener = new SensorEventListener() {
-        public void onSensorChanged(SensorEvent se) {
-            float x = se.values[0];
-            float y = se.values[1];
-            float z = se.values[2];
-            mAccelLast = mAccelCurrent;
-            mAccelCurrent = (float) Math.sqrt((double) (x*x + y*y + z*z));
-            float delta = mAccelCurrent - mAccelLast;
-            mAccel = mAccel * 0.9f + delta; // perform low-cut filter
-            if (mAccel > 8) {
-                Toast toast = Toast.makeText(getApplicationContext(), "Device has shaken. ", Toast.LENGTH_SHORT);
-                toast.show();
-                bus.post(new FireEvent());
-            }
-        }
-
-        @Background
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        }
-    };
-
     /**
      * Registers the shakeListener and plays music when the activity resumes
      *
@@ -158,7 +143,7 @@ public class TankClientActivity extends AppCompatActivity  {
         mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.game_sound_1);
         mediaPlayer.setLooping(true);
         mediaPlayer.start();
-        shakeSensor.registerListener(mSensorListener, shakeSensor.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
+        mySensorManager.registerListener(myShakeListener, mySensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
     }
 
 
@@ -170,7 +155,7 @@ public class TankClientActivity extends AppCompatActivity  {
     @Override
     protected void onPause() {
         mediaPlayer.release();
-        shakeSensor.unregisterListener(mSensorListener);
+        mySensorManager.unregisterListener(myShakeListener);
         super.onPause();
     }
 
@@ -187,6 +172,7 @@ public class TankClientActivity extends AppCompatActivity  {
     @Click(R.id.left)
     void leftClicked(){
         Log.i(TAG, "leftClicked");
+        if (!replay)
         bus.post(new MoveEvent(Tile.LEFT));
     }
 
@@ -194,6 +180,7 @@ public class TankClientActivity extends AppCompatActivity  {
     @Click(R.id.right)
     void rightClicked(){
         Log.i(TAG, "rightClicked");
+        if (!replay)
         bus.post(new MoveEvent(Tile.RIGHT));
     }
 
@@ -201,6 +188,7 @@ public class TankClientActivity extends AppCompatActivity  {
     @Click(R.id.up)
     void upClicked(){
         Log.i(TAG, "upClicked");
+        if (!replay)
         bus.post(new MoveEvent(Tile.UP));
     }
 
@@ -208,12 +196,14 @@ public class TankClientActivity extends AppCompatActivity  {
     @Click(R.id.down)
     void downClicked(){
         Log.i(TAG, "downClicked");
+        if (!replay)
         bus.post(new MoveEvent(Tile.DOWN));
     }
 
     @Background
     @Click(R.id.fire)
     void fireClicked(){
-       bus.post(new FireEvent());
+        if (!replay)
+        bus.post(new FireEvent());
     }
 }
