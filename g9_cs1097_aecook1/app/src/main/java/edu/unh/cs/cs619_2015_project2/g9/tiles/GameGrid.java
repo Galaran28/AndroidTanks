@@ -108,6 +108,7 @@ public class GameGrid {
     @Subscribe
     public void fireBullet(FireEvent f) {
         Log.i(TAG, "Firing....");
+        if(playerAlive)
         if (!hasFired && missilesFired < MAX_BULLETS) {
             Log.i(TAG, "Fire allowed....");
             restClient.fire(tankId);

@@ -36,17 +36,14 @@ public class HomeScreen extends AppCompatActivity {
         imageView2.setImageResource(R.mipmap.home_screen_backimage);
         ImageView imageView = (ImageView) findViewById(R.id.screenImage);
         imageView.setImageResource(R.mipmap.home_screen_4);
-     //   mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.home_screen_sound_2);
-      //  mediaPlayer.setLooping(true);
-       // mediaPlayer.start();
         Button join = (Button) findViewById(R.id.join);
         join.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 try {
-                  //  mediaPlayer.release();
                     Intent intent = new Intent(getApplicationContext(), TankClientActivity_.class);
+                    intent.putExtra("message", "join");
                     startActivity(intent);
                 } catch (RestClientException e) {
                     Toast.makeText(getApplicationContext(), "Unable to join server", Toast.LENGTH_SHORT);
@@ -54,6 +51,23 @@ public class HomeScreen extends AppCompatActivity {
 
             }
         });
+
+        Button replay = (Button) findViewById(R.id.replay);
+        replay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    Intent intent = new Intent(getApplicationContext(), TankClientActivity_.class);
+                    intent.putExtra("message", "replay");
+                    startActivity(intent);
+                } catch (RestClientException e) {
+                    Toast.makeText(getApplicationContext(), "Unable to join server", Toast.LENGTH_SHORT);
+                }
+
+            }
+        });
+
+
 
 
     }

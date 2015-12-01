@@ -27,7 +27,7 @@ public class TileUIFactory {
     @AfterInject
     public void afterInjection() {
         bullet = createTile(R.mipmap.missile_base_2);
-        wallUnbreakable = createTile(R.mipmap.breakable_wall);
+        wallUnbreakable = createTile(R.mipmap.wall_unbreakable);
         wallBreakable = createTile(R.mipmap.breakable_wall);
         tankUp = createTile(R.mipmap.enemy_up_2);
         tankDown = createTile(R.mipmap.enemy_down_2);

@@ -75,7 +75,13 @@ public class TankClientActivity extends AppCompatActivity  {
         mAccelLast = SensorManager.GRAVITY_EARTH;
         enableImmersive();
 
-        Toast toast = Toast.makeText(getApplicationContext(), "New Game ", Toast.LENGTH_SHORT);
+        Bundle bundle = getIntent().getExtras();
+        String message = bundle.getString("message");
+
+        if (message.equals("replay"))
+            bus.post(new edu.unh.cs.cs619_2015_project2.g9.events.BeginReplayEvent(1));
+
+        Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
         toast.show();
 
     }
