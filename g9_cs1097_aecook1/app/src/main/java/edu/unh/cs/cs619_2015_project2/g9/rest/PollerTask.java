@@ -16,6 +16,9 @@ import org.androidannotations.annotations.rest.RestService;
 
 import android.util.Log;
 
+import com.squareup.otto.Subscribe;
+
+import edu.unh.cs.cs619_2015_project2.g9.events.BeginReplayEvent;
 import edu.unh.cs.cs619_2015_project2.g9.restore.ElementChange;
 import edu.unh.cs.cs619_2015_project2.g9.restore.GridChange;
 import edu.unh.cs.cs619_2015_project2.g9.tiles.GameGrid;
@@ -32,6 +35,7 @@ import edu.unh.cs.cs619_2015_project2.g9.util.OttoBus;
 @EBean
 public class PollerTask {
     private static final String TAG = "GridPollerTask";
+    private boolean enabled = true;
 
     @Bean
     protected OttoBus bus;
@@ -43,7 +47,8 @@ public class PollerTask {
 
     @AfterInject
     public void init() {
-       current = new int[GameGrid.x][GameGrid.y];
+        current = new int[GameGrid.x][GameGrid.y];
+        bus.register(this);
     }
 
     /**
@@ -53,7 +58,7 @@ public class PollerTask {
      */
     @Background(id = "grid_poller_task")
     public void doPoll(int pollInterval) {
-        while (true) {
+        while (enabled) {
             onGridUpdate(restClient.grid());
             SystemClock.sleep(pollInterval);
         }
@@ -100,5 +105,14 @@ public class PollerTask {
             }
         }
         return changes;
+    }
+
+    /**
+     * When the replay begins disable the poller thread
+     * @param e the reply initilizer
+     */
+    @Subscribe
+    public void suspend(BeginReplayEvent e) {
+        enabled = false;
     }
 }
