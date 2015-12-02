@@ -13,5 +13,6 @@ public class ChangeContract {
     public static abstract class ChangeRow implements BaseColumns {
         public static final String TABLE_NAME = "saveRestore";
         public static final String COLUMN_NAME_CHANGE_BLOB = "changeBlob";
+        public static final String COLUMN_NAME_TIMESTAMP = "timestamp";
     }
 }

@@ -1,6 +1,7 @@
 package edu.unh.cs.cs619_2015_project2.g9.ui;
 
 import android.content.Context;
+import android.support.annotation.UiThread;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +45,7 @@ public class GridAdapter extends BaseAdapter {
 
     // create a new ImageView for each item referenced by the Adapter
     @Override
+    @UiThread
     public View getView(final int position, View convertView, ViewGroup parent) {
         //Log.d(TAG, "getView");
         final ImageView imageView;
@@ -63,6 +65,7 @@ public class GridAdapter extends BaseAdapter {
     }
 
     @Subscribe
+    @UiThread
     public void updateGrid(Tile[][] board)
     {
         Log.d(TAG, "Updating GridView");

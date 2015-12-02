@@ -2,6 +2,7 @@ package edu.unh.cs.cs619_2015_project2.g9.tiles;
 
 import android.app.Activity;
 import android.os.SystemClock;
+import android.support.annotation.UiThread;
 import android.util.Log;
 
 import com.squareup.otto.Subscribe;
@@ -20,6 +21,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import edu.unh.cs.cs619_2015_project2.g9.TankClientActivity;
+import edu.unh.cs.cs619_2015_project2.g9.events.BeginReplayEvent;
 import edu.unh.cs.cs619_2015_project2.g9.events.FireEvent;
 import edu.unh.cs.cs619_2015_project2.g9.events.MoveEvent;
 import edu.unh.cs.cs619_2015_project2.g9.events.TurnEvent;
@@ -70,6 +72,12 @@ public class GameGrid {
     BulletZoneRestClient restClient;
 
     @AfterInject
+    @UiThread
+    protected void injection() {
+        bus.register(this);
+    }
+
+    @AfterInject
     @Background
     protected void afterInjection() {
         Log.d(TAG, "afterInjection");
@@ -80,7 +88,6 @@ public class GameGrid {
             Arrays.fill(t, factory.createTile(0));
         }
 
-        bus.register(this);
 
         try {
             tankId = restClient.join().getResult();
@@ -133,7 +140,7 @@ public class GameGrid {
                 this.moveCooldown();
                 restClient.move(tankId, m.direction);
             } else {
-                bus.post(new TurnEvent(m.direction));
+                this.turn(new TurnEvent(m.direction));
             }
         }
     }
@@ -168,6 +175,7 @@ public class GameGrid {
      * @param gc A GridChange object representing any alterations to the grid since the last update
      */
     @Subscribe
+    @UiThread
     public void parseGrid(GridChange gc) {
         Log.d(TAG, "parsing grid to Tile array");
         int missiles = 0;
@@ -203,6 +211,7 @@ public class GameGrid {
         }
         if (!foundPlayer) {
             playerAlive = false;
+            bus.post(new BeginReplayEvent(1));
             //  Log.e(TAG, "could not find player: " + tankId);
             //   restClient.leave(tankId);
         }
@@ -253,7 +262,6 @@ public class GameGrid {
         }
     }
 
-    @Background
     public void release() {
         poller.release();
         poller = null;

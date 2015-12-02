@@ -11,12 +11,14 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class ChangeDBHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "Change.db";
-    private static final String TYPE = " BLOB";
+    private static final String TYPE_BLOB = " BLOB";
+    private static final String TYPE_TEXT = " TEXT";
     private static final String COMMA_SEP = ",";
     private static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + ChangeContract.ChangeRow.TABLE_NAME + " (" +
                     ChangeContract.ChangeRow._ID + " INTEGER PRIMARY KEY," +
-                    ChangeContract.ChangeRow.COLUMN_NAME_CHANGE_BLOB + TYPE +
+                    ChangeContract.ChangeRow.COLUMN_NAME_CHANGE_BLOB + TYPE_BLOB + COMMA_SEP +
+                    ChangeContract.ChangeRow.COLUMN_NAME_TIMESTAMP + TYPE_TEXT +
             " )";
 
     private static final String SQL_DELETE_ENTRIES =

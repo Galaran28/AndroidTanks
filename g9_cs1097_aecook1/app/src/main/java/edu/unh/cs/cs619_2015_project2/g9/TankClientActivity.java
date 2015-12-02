@@ -76,17 +76,7 @@ public class TankClientActivity extends AppCompatActivity  {
 
     @AfterInject
     public void afterInjection() {
-
-        Bundle bundle = getIntent().getExtras();
-        String message = bundle.getString("message");
-        if (message.equals("replay")) {
-            bus.post(new BeginReplayEvent(1));
-            replay = true;
-        } else {
-            saveRestore.reset(); // prepare db for new game
-        }
-        Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
-        toast.show();
+        saveRestore.reset(); // prepare db for new game
 
         mySensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mySensor = mySensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -185,7 +175,6 @@ public class TankClientActivity extends AppCompatActivity  {
      * @Author Alex Cook
      */
 
-    @Background
     @Click(R.id.left)
     void leftClicked(){
         Log.i(TAG, "leftClicked");
@@ -193,7 +182,6 @@ public class TankClientActivity extends AppCompatActivity  {
         bus.post(new MoveEvent(Tile.LEFT));
     }
 
-    @Background
     @Click(R.id.right)
     void rightClicked(){
         Log.i(TAG, "rightClicked");
@@ -201,7 +189,6 @@ public class TankClientActivity extends AppCompatActivity  {
         bus.post(new MoveEvent(Tile.RIGHT));
     }
 
-    @Background
     @Click(R.id.up)
     void upClicked(){
         Log.i(TAG, "upClicked");
@@ -209,7 +196,6 @@ public class TankClientActivity extends AppCompatActivity  {
         bus.post(new MoveEvent(Tile.UP));
     }
 
-    @Background
     @Click(R.id.down)
     void downClicked(){
         Log.i(TAG, "downClicked");
@@ -217,7 +203,6 @@ public class TankClientActivity extends AppCompatActivity  {
         bus.post(new MoveEvent(Tile.DOWN));
     }
 
-    @Background
     @Click(R.id.fire)
     void fireClicked(){
         if (!replay)

@@ -1,11 +1,14 @@
 package edu.unh.cs.cs619_2015_project2.g9.restore;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Handler;
 import android.os.SystemClock;
+import android.support.annotation.UiThread;
 import android.util.Log;
 
 import com.squareup.otto.Subscribe;
@@ -59,9 +62,11 @@ public class SaveRestore {
      * @param gc A list of change to the board
      */
     @Subscribe
-    @Background
     public void saveFrame(GridChange gc) {
-        if (restoring) {return;} // these events are from the restore function, ignore
+        if (restoring) {
+            Log.i(TAG, "ignoring db write");
+            return;
+        } // these events are from the restore function, ignore
 
         // serilize frame
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -78,6 +83,7 @@ public class SaveRestore {
         // Create a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
         values.put(ChangeContract.ChangeRow.COLUMN_NAME_CHANGE_BLOB, bos.toByteArray());
+        values.put(ChangeContract.ChangeRow.COLUMN_NAME_TIMESTAMP, gc.timestamp);
 
         long newRowId;
         newRowId = db.insert(
@@ -90,7 +96,6 @@ public class SaveRestore {
     /**
      * When signaled by a event, start reading the frames from the db and publishing them to the
      * bus. The replay event contains the scaling factor for the delays between publishing
-     * @param e ReplyEvent with the scaling factor
      */
     @Subscribe
     @Background
@@ -100,11 +105,12 @@ public class SaveRestore {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
         String[] projection = {
-                ChangeContract.ChangeRow.COLUMN_NAME_CHANGE_BLOB
+                ChangeContract.ChangeRow.COLUMN_NAME_CHANGE_BLOB,
+                ChangeContract.ChangeRow.COLUMN_NAME_TIMESTAMP
         };
 
         String sortOrder =
-                ChangeContract.ChangeRow._ID + " ASC";
+                ChangeContract.ChangeRow.COLUMN_NAME_TIMESTAMP + " ASC";
 
         Cursor c = db.query(
                 ChangeContract.ChangeRow.TABLE_NAME,    // The table to query
@@ -116,30 +122,32 @@ public class SaveRestore {
                 sortOrder                               // The sort order
         );
         // read all the frames from the db in sequence
-        Log.i(TAG, "setting cursor");
         c.moveToFirst();
-        if (c.isAfterLast()) {
-            restoring = false;
-            Log.i(TAG, "Nothing in db");
-            return;
-        }
-
-        GridChange current, next;
-        long sleepTime;
-        Log.i(TAG, "getting first frame");
-        current = decode(c.getBlob(c.getColumnIndex(ChangeContract.ChangeRow.COLUMN_NAME_CHANGE_BLOB)));
+        long sleepTime, previousTime, currentTime;
+        previousTime = c.getLong(c.getColumnIndex(ChangeContract.ChangeRow.COLUMN_NAME_TIMESTAMP));
         while(!c.isLast()) {
-            Log.i(TAG, "getting next frame");
-            next = decode(c.getBlob(c.getColumnIndex(ChangeContract.ChangeRow.COLUMN_NAME_CHANGE_BLOB)));
-            bus.post(current);
-            sleepTime = (next.timestamp - current.timestamp)/e.speedFactor;
-            current = next;
+            currentTime = c.getLong(c.getColumnIndex(ChangeContract.ChangeRow.COLUMN_NAME_TIMESTAMP));
+            sleepTime = (currentTime - previousTime)/ e.speedFactor;
+            if (sleepTime < 0 ) {sleepTime *= -1;}
+            previousTime = currentTime;
+
+            postFrame(c.getBlob(c.getColumnIndex(ChangeContract.ChangeRow.COLUMN_NAME_CHANGE_BLOB)));
             c.moveToNext();
             Log.i(TAG, "sleeping for " + sleepTime + " miliseconds");
             SystemClock.sleep(sleepTime);
         }
+    }
 
-        restoring = false; // singnal that frames are no longer from the db
+    @UiThread
+    public void postFrame(byte[] f) {
+        final GridChange gc = decode(f);
+
+        new Handler(root.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                bus.post(gc);
+            }
+        });
     }
 
     /**
