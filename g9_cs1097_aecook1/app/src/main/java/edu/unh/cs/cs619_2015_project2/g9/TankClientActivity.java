@@ -31,10 +31,8 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Fullscreen;
 import org.androidannotations.annotations.LongClick;
 import org.androidannotations.annotations.ViewById;
-import org.androidannotations.annotations.WindowFeature;
 
 import edu.unh.cs.cs619_2015_project2.g9.events.BeginReplayEvent;
 import edu.unh.cs.cs619_2015_project2.g9.events.FireEvent;
@@ -121,6 +119,7 @@ public class TankClientActivity extends AppCompatActivity  {
                 bus.post(new FireEvent());
             }
         });
+
      }
 
     /**
@@ -267,8 +266,8 @@ public class TankClientActivity extends AppCompatActivity  {
                     bus.post(new BeginReplayEvent(Integer.parseInt(speedInput.getText().toString())));
                 } catch (NumberFormatException e) {
                     // bad text input, default to real time speed
-                    bus.post(new BeginReplayEvent(1));
-                }
+                bus.post(new BeginReplayEvent(1));
+            }
             }
         });
 
@@ -285,5 +284,5 @@ public class TankClientActivity extends AppCompatActivity  {
    @Subscribe
     public void restoreDone(ResoreDoneEvent e) {
        finish();
-   }
+    }
 }

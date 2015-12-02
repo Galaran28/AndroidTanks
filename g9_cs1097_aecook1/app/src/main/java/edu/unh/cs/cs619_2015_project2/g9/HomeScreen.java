@@ -2,8 +2,10 @@ package edu.unh.cs.cs619_2015_project2.g9;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -41,12 +43,15 @@ public class HomeScreen extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                if( hasConnection())
                 try {
                     Intent intent = new Intent(getApplicationContext(), TankClientActivity_.class);
                     startActivity(intent);
                 } catch (RestClientException e) {
                     Toast.makeText(getApplicationContext(), "Unable to join server", Toast.LENGTH_SHORT);
                 }
+                else
+                    Toast.makeText(getApplicationContext(),"Unable to connect to internet", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -91,6 +96,12 @@ public class HomeScreen extends AppCompatActivity {
     protected void onPause() {
         mediaPlayer.release();
         super.onPause();
+    }
+
+
+    private boolean hasConnection() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        return (connectivityManager.getActiveNetworkInfo() != null );
     }
 
 }
