@@ -228,7 +228,10 @@ public class TankClientActivity extends AppCompatActivity  {
     }
 
 
-
+    /**
+     * Shows two buttons when the game ends. They will either relay the game or exit to homescreen
+     * Author Alex Cook
+     */
     private void showEnd()
     {
         if (!replayMode) {

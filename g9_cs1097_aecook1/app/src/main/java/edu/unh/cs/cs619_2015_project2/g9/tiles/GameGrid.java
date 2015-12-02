@@ -269,6 +269,12 @@ public class GameGrid {
         bus.unregister(this);
     }
 
+    /**
+     * Returns status of game
+     *
+     * Author Alex Cook
+     * @return if th game is over or not
+     */
     public boolean gameOver()
     {
         return gameOver;
