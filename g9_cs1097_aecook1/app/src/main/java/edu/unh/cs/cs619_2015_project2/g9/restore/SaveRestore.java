@@ -136,6 +136,8 @@ public class SaveRestore {
             Log.i(TAG, "sleeping for " + sleepTime + " miliseconds");
             SystemClock.sleep(sleepTime);
         }
+
+        restoring = false;
     }
 
     @UiThread

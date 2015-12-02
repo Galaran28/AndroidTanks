@@ -15,6 +15,8 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Menu;
+import android.view.Window;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -25,8 +27,10 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Fullscreen;
 import org.androidannotations.annotations.LongClick;
 import org.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.WindowFeature;
 
 import edu.unh.cs.cs619_2015_project2.g9.events.BeginReplayEvent;
 import edu.unh.cs.cs619_2015_project2.g9.events.FireEvent;
@@ -61,11 +65,22 @@ public class TankClientActivity extends AppCompatActivity  {
     @ViewById
     GridView gridview;
 
+    @ViewById
+    Button up;
+
+    @ViewById
+    Button down;
+
+    @ViewById
+    Button left;
+
+    @ViewById
+    Button right;
+
     private SensorManager mySensorManager;
     private Sensor mySensor;
     private MyShakeListener myShakeListener;
 
-    private boolean replay = false;
     private static MediaPlayer mediaPlayer;
 
     @AfterViews
@@ -84,7 +99,6 @@ public class TankClientActivity extends AppCompatActivity  {
         myShakeListener.setOnShakeListener(new MyShakeListener.OnShakeListener() {
             @Override
             public void onShake(int count) {
-                if(!replay)
                     bus.post(new FireEvent());
             }
         });
@@ -179,34 +193,44 @@ public class TankClientActivity extends AppCompatActivity  {
     @Click(R.id.left)
     void leftClicked(){
         Log.i(TAG, "leftClicked");
-        if (!replay)
         bus.post(new MoveEvent(Tile.LEFT));
     }
 
     @Click(R.id.right)
     void rightClicked(){
         Log.i(TAG, "rightClicked");
-        if (!replay)
         bus.post(new MoveEvent(Tile.RIGHT));
     }
 
     @Click(R.id.up)
     void upClicked(){
         Log.i(TAG, "upClicked");
-        if (!replay)
         bus.post(new MoveEvent(Tile.UP));
     }
 
     @Click(R.id.down)
     void downClicked(){
         Log.i(TAG, "downClicked");
-        if (!replay)
         bus.post(new MoveEvent(Tile.DOWN));
     }
 
     @Click(R.id.fire)
     void fireClicked(){
-        if (!replay)
         bus.post(new FireEvent());
+    }
+
+    private void togglUI() {
+        if (up.isEnabled()) {
+            up.setEnabled(false);
+            down.setEnabled(false);
+            left.setEnabled(false);
+            right.setEnabled(false);
+        } else {
+            up.setEnabled(true);
+            down.setEnabled(true);
+            left.setEnabled(true);
+            right.setEnabled(true);
+        }
+
     }
 }

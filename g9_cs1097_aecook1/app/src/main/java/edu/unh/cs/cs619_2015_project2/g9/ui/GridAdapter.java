@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.squareup.otto.Subscribe;
 
@@ -18,11 +17,7 @@ import org.androidannotations.annotations.RootContext;
 
 import java.util.ArrayList;
 
-import edu.unh.cs.cs619_2015_project2.g9.R;
-import edu.unh.cs.cs619_2015_project2.g9.events.MoveEvent;
 import edu.unh.cs.cs619_2015_project2.g9.tiles.Tile;
-import edu.unh.cs.cs619_2015_project2.g9.tiles.Wall;
-import edu.unh.cs.cs619_2015_project2.g9.tiles.GameGrid;
 import edu.unh.cs.cs619_2015_project2.g9.util.OttoBus;
 
 @EBean
@@ -53,9 +48,7 @@ public class GridAdapter extends BaseAdapter {
         if (convertView == null) {
             imageView = new ImageView(context);
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        }
-        else
-        {
+        } else {
             imageView = (ImageView) convertView;
         }
 
@@ -66,12 +59,11 @@ public class GridAdapter extends BaseAdapter {
 
     @Subscribe
     @UiThread
-    public void updateGrid(Tile[][] board)
-    {
+    public void updateGrid(Tile[][] board) {
         Log.d(TAG, "Updating GridView");
         tiles.clear(); //clear internal arraylist
-        for ( int i = 0; i < board.length; i++) {
-            for ( int j = 0; j < board[i].length; j++) {
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[i].length; j++) {
                 tiles.add(board[i][j]);
             }
         }
