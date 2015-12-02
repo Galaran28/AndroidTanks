@@ -17,9 +17,12 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Menu;
+<<<<<<< HEAD
+import android.view.Window;
+=======
+>>>>>>> 5bb457cd175c0b56147cb2e46f3f9275f5479b75
 import android.widget.Button;
 import android.widget.GridView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -39,8 +42,6 @@ import org.androidannotations.annotations.WindowFeature;
 import edu.unh.cs.cs619_2015_project2.g9.events.BeginReplayEvent;
 import edu.unh.cs.cs619_2015_project2.g9.events.FireEvent;
 import edu.unh.cs.cs619_2015_project2.g9.events.MoveEvent;
-import edu.unh.cs.cs619_2015_project2.g9.events.PlayerDeadEvent;
-import edu.unh.cs.cs619_2015_project2.g9.events.ResoreDoneEvent;
 import edu.unh.cs.cs619_2015_project2.g9.events.TurnEvent;
 import edu.unh.cs.cs619_2015_project2.g9.restore.SaveRestore;
 import edu.unh.cs.cs619_2015_project2.g9.tiles.GameGrid;
@@ -68,11 +69,9 @@ public class TankClientActivity extends AppCompatActivity  {
     @Bean
     GridAdapter gridAdapter;
 
+    private MyShakeListener myShakeListener;
     @ViewById
     GridView gridview;
-
-    @ViewById
-    TextView speedInput;
 
     @ViewById
     Button up;
@@ -86,20 +85,16 @@ public class TankClientActivity extends AppCompatActivity  {
     @ViewById
     Button right;
 
-    @ViewById
-    Button exit;
-
-    @ViewById
-    Button replay;
-
-    @ViewById
-    Button fire;
-
     private SensorManager mySensorManager;
     private Sensor mySensor;
+<<<<<<< HEAD
     private MyShakeListener myShakeListener;
-    private static MediaPlayer mediaPlayer;
 
+=======
+>>>>>>> 5bb457cd175c0b56147cb2e46f3f9275f5479b75
+    private static MediaPlayer mediaPlayer;
+  //  public Button exit; // = (Button) findViewById(R.id.exit);
+  //  public Button replay;// = (Button) findViewById(R.id.replay);
     @AfterViews
     public void afterViews() {
         gridview.setAdapter(gridAdapter);
@@ -109,8 +104,6 @@ public class TankClientActivity extends AppCompatActivity  {
     @AfterInject
     public void afterInjection() {
         saveRestore.reset(); // prepare db for new game
-        bus.register(this);
-
 
         mySensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mySensor = mySensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -118,9 +111,14 @@ public class TankClientActivity extends AppCompatActivity  {
         myShakeListener.setOnShakeListener(new MyShakeListener.OnShakeListener() {
             @Override
             public void onShake(int count) {
-                bus.post(new FireEvent());
+<<<<<<< HEAD
+                    bus.post(new FireEvent());
+=======
+                game.fireHelper();
+>>>>>>> 5bb457cd175c0b56147cb2e46f3f9275f5479b75
             }
         });
+        game.setContext(this);
      }
 
     /**
@@ -211,33 +209,79 @@ public class TankClientActivity extends AppCompatActivity  {
 
     @Click(R.id.left)
     void leftClicked(){
+        Log.i(TAG, "leftClicked");
+<<<<<<< HEAD
         bus.post(new MoveEvent(Tile.LEFT));
+=======
+        if(!game.gameOver())
+            game.moveHelper(Tile.LEFT);
+        else
+            showEnd();
+        //bus.post(new MoveEvent(Tile.LEFT));
+>>>>>>> 5bb457cd175c0b56147cb2e46f3f9275f5479b75
     }
 
     @Click(R.id.right)
     void rightClicked(){
+        Log.i(TAG, "rightClicked");
+<<<<<<< HEAD
         bus.post(new MoveEvent(Tile.RIGHT));
+=======
+        if(!game.gameOver())
+            game.moveHelper(Tile.RIGHT);
+        else
+            showEnd();
+>>>>>>> 5bb457cd175c0b56147cb2e46f3f9275f5479b75
     }
 
     @Click(R.id.up)
     void upClicked(){
+        Log.i(TAG, "upClicked");
+<<<<<<< HEAD
         bus.post(new MoveEvent(Tile.UP));
+=======
+
+        if(!game.gameOver())
+            game.moveHelper(Tile.UP);
+        else
+            showEnd();
+        //bus.post(new MoveEvent(Tile.UP));
+>>>>>>> 5bb457cd175c0b56147cb2e46f3f9275f5479b75
     }
 
     @Click(R.id.down)
     void downClicked(){
+        Log.i(TAG, "downClicked");
+<<<<<<< HEAD
         bus.post(new MoveEvent(Tile.DOWN));
+=======
+        if(!game.gameOver())
+        game.moveHelper(Tile.DOWN);
+        else
+            showEnd();
+        //if (!replay)
+       // bus.post(new MoveEvent(Tile.DOWN));
+>>>>>>> 5bb457cd175c0b56147cb2e46f3f9275f5479b75
     }
 
     @Click(R.id.fire)
     void fireClicked(){
+<<<<<<< HEAD
         bus.post(new FireEvent());
+=======
+        //if (!replay)
+       // bus.post(new FireEvent());
+        if(!game.gameOver())
+        game.fireHelper();
+        else
+            showEnd();
     }
 
-    @Subscribe
-    public void showEnd(PlayerDeadEvent e) {
-        Log.i(TAG, "Displaying end");
-        disableControls();
+
+
+    private void showEnd()
+    {
+        final Button exit = (Button) findViewById(R.id.exit);
         exit.setBackgroundColor(Color.RED);
         exit.setText("Exit");
         exit.setOnClickListener(new View.OnClickListener() {
@@ -246,9 +290,7 @@ public class TankClientActivity extends AppCompatActivity  {
             }
         });
 
-        speedInput.setEnabled(true);
-        speedInput.setVisibility(View.VISIBLE);
-
+        final Button replay = (Button) findViewById(R.id.replay);
         replay.setBackgroundColor(Color.GREEN);
         replay.setText("Replay");
         replay.setOnClickListener(new View.OnClickListener() {
@@ -259,31 +301,25 @@ public class TankClientActivity extends AppCompatActivity  {
                 exit.setBackgroundColor(Color.TRANSPARENT);
                 replay.setEnabled(false);
                 exit.setEnabled(false);
-                speedInput.setEnabled(false);
-                speedInput.setVisibility(View.INVISIBLE);
-                replay.setVisibility(View.INVISIBLE);
-                exit.setVisibility(View.INVISIBLE);
-                try {
-                    bus.post(new BeginReplayEvent(Integer.parseInt(speedInput.getText().toString())));
-                } catch (NumberFormatException e) {
-                    // bad text input, default to real time speed
-                    bus.post(new BeginReplayEvent(1));
-                }
+                bus.post(new BeginReplayEvent(1));
             }
         });
 
+>>>>>>> 5bb457cd175c0b56147cb2e46f3f9275f5479b75
     }
 
-    private void disableControls() {
+    private void togglUI() {
+        if (up.isEnabled()) {
             up.setEnabled(false);
             down.setEnabled(false);
             left.setEnabled(false);
             right.setEnabled(false);
-            fire.setEnabled(false);
-    }
+        } else {
+            up.setEnabled(true);
+            down.setEnabled(true);
+            left.setEnabled(true);
+            right.setEnabled(true);
+        }
 
-   @Subscribe
-    public void restoreDone(ResoreDoneEvent e) {
-       finish();
-   }
+    }
 }

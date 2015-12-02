@@ -28,6 +28,7 @@ import java.io.ObjectOutputStream;
 import java.sql.Blob;
 
 import edu.unh.cs.cs619_2015_project2.g9.events.BeginReplayEvent;
+import edu.unh.cs.cs619_2015_project2.g9.events.ResoreDoneEvent;
 import edu.unh.cs.cs619_2015_project2.g9.util.GridWrapper;
 import edu.unh.cs.cs619_2015_project2.g9.util.OttoBus;
 
@@ -54,6 +55,7 @@ public class SaveRestore {
         dbHelper.onDelete(dbHelper.getWritableDatabase()); // clear any previous saved games
         dbHelper.onCreate(dbHelper.getWritableDatabase());
         current = new int[16][16];
+
         bus.register(this);
     }
 
@@ -64,7 +66,6 @@ public class SaveRestore {
     @Subscribe
     public void saveFrame(GridChange gc) {
         if (restoring) {
-            Log.i(TAG, "ignoring db write");
             return;
         } // these events are from the restore function, ignore
 
@@ -90,7 +91,7 @@ public class SaveRestore {
                 ChangeContract.ChangeRow.TABLE_NAME,
                 "null",
                 values);
-        Log.i("dbWrite", "wrote row " + newRowId + " to db");
+        Log.d("dbWrite", "wrote row " + newRowId + " to db");
     }
 
     /**
@@ -133,11 +134,12 @@ public class SaveRestore {
 
             postFrame(c.getBlob(c.getColumnIndex(ChangeContract.ChangeRow.COLUMN_NAME_CHANGE_BLOB)));
             c.moveToNext();
-            Log.i(TAG, "sleeping for " + sleepTime + " miliseconds");
+            Log.d(TAG, "sleeping for " + sleepTime + " miliseconds");
             SystemClock.sleep(sleepTime);
         }
 
         restoring = false;
+        bus.post(new ResoreDoneEvent());
     }
 
     @UiThread

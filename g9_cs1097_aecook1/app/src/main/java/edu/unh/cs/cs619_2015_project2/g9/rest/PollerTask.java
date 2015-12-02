@@ -13,7 +13,10 @@ import android.util.Log;
 
 import com.squareup.otto.Subscribe;
 
+import java.util.Arrays;
+
 import edu.unh.cs.cs619_2015_project2.g9.events.BeginReplayEvent;
+import edu.unh.cs.cs619_2015_project2.g9.events.PlayerDeadEvent;
 import edu.unh.cs.cs619_2015_project2.g9.restore.ElementChange;
 import edu.unh.cs.cs619_2015_project2.g9.restore.GridChange;
 import edu.unh.cs.cs619_2015_project2.g9.tiles.GameGrid;
@@ -44,6 +47,13 @@ public class PollerTask {
     public void init() {
         current = new int[GameGrid.x][GameGrid.y];
         bus.register(this);
+
+        // initilize array to out of band value
+        for (int i = 0; i < current.length; i++) {
+            for (int j = 0; j < current[i].length; j++) {
+                Arrays.fill(current[i], -1);
+            }
+        }
     }
 
     /**
@@ -107,7 +117,7 @@ public class PollerTask {
      * @param e the reply initilizer
      */
     @Subscribe
-    public void suspend(BeginReplayEvent e) {
+    public void suspend(PlayerDeadEvent e) {
         enabled = false;
     }
 

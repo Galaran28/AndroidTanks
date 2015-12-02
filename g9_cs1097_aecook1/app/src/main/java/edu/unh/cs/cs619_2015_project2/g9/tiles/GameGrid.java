@@ -1,9 +1,11 @@
 package edu.unh.cs.cs619_2015_project2.g9.tiles;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.SystemClock;
 import android.support.annotation.UiThread;
 import android.util.Log;
+import android.widget.Button;
 
 import com.squareup.otto.Subscribe;
 
@@ -24,6 +26,7 @@ import edu.unh.cs.cs619_2015_project2.g9.TankClientActivity;
 import edu.unh.cs.cs619_2015_project2.g9.events.BeginReplayEvent;
 import edu.unh.cs.cs619_2015_project2.g9.events.FireEvent;
 import edu.unh.cs.cs619_2015_project2.g9.events.MoveEvent;
+import edu.unh.cs.cs619_2015_project2.g9.events.PlayerDeadEvent;
 import edu.unh.cs.cs619_2015_project2.g9.events.TurnEvent;
 import edu.unh.cs.cs619_2015_project2.g9.rest.BulletZoneRestClient;
 import edu.unh.cs.cs619_2015_project2.g9.rest.PollerTask;
@@ -53,7 +56,7 @@ public class GameGrid {
     public static final int y = 16;
 
     private long tankId;
-    private boolean hasFired, hasMoved, hasTurned;
+    private boolean hasFired, hasMoved;
     private int missilesFired = 0;
     private boolean playerAlive = true;
     private byte playerDirection;
@@ -157,9 +160,8 @@ public class GameGrid {
     @Subscribe
     public void turn(TurnEvent t) {
         Log.i(TAG, "Turning....");
-        if (!hasTurned && playerAlive) {
+        if (playerAlive) {
             Log.i(TAG, "Turning allowed");
-            hasTurned = true;
             restClient.turn(tankId, t.direction);
         }
     }
@@ -208,7 +210,9 @@ public class GameGrid {
             }
         }
         if (!playerAlive) {
-            bus.post(new BeginReplayEvent(1));
+            Log.i(TAG, "player dead");
+            playerAlive=false;
+            bus.post(new PlayerDeadEvent());
         }
 
         missilesFired = missiles;
@@ -223,7 +227,6 @@ public class GameGrid {
     public void moveCooldown() {
         SystemClock.sleep(MOVE_INTERVAL);
         hasMoved = false;
-        hasTurned = false;
     }
 
     /**
@@ -261,8 +264,6 @@ public class GameGrid {
     public void release() {
         poller.release();
         poller = null;
-
-//        restClient.leave(tankId);
         bus.unregister(this);
     }
 }

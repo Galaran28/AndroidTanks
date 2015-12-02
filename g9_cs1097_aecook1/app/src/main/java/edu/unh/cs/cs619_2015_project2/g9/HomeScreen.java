@@ -43,7 +43,6 @@ public class HomeScreen extends AppCompatActivity {
 
                 try {
                     Intent intent = new Intent(getApplicationContext(), TankClientActivity_.class);
-                    intent.putExtra("message", "join");
                     startActivity(intent);
                 } catch (RestClientException e) {
                     Toast.makeText(getApplicationContext(), "Unable to join server", Toast.LENGTH_SHORT);
@@ -52,18 +51,11 @@ public class HomeScreen extends AppCompatActivity {
             }
         });
 
-        Button replay = (Button) findViewById(R.id.replay);
-        replay.setOnClickListener(new View.OnClickListener() {
+        Button exit = (Button) findViewById(R.id.exit_home);
+        exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    Intent intent = new Intent(getApplicationContext(), TankClientActivity_.class);
-                    intent.putExtra("message", "replay");
-                    startActivity(intent);
-                } catch (RestClientException e) {
-                    Toast.makeText(getApplicationContext(), "Unable to join server", Toast.LENGTH_SHORT);
-                }
-
+                finish();
             }
         });
     }
