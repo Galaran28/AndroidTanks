@@ -61,7 +61,6 @@ public class GameGrid {
     private boolean gameOver = false;
     private byte playerDirection;
     private Tile[][] board;
-    private Context context;
 
     @Bean
     protected OttoBus bus;
@@ -101,34 +100,6 @@ public class GameGrid {
 
         // update board every POL_INTERVAL milliseconds
         poller.doPoll(POL_INTERVAL);
-    }
-
-
-    public void setContext(Context c)
-    {
-        context = c;
-    }
-
-
-    /**
-     * Determines if the game is over before trying to move
-     *
-     * @Author Alex Cook
-     * @param direction
-     */
-
-    public void moveHelper(byte direction){
-        if (!gameOver)
-            bus.post(new MoveEvent(direction));
-    }
-
-    /**
-     * Determines if the game is over before trying to shoot
-     * @Author Alex Cook
-     */
-    public void fireHelper(){
-        if (!gameOver)
-            bus.post(new FireEvent());
     }
 
     /**
