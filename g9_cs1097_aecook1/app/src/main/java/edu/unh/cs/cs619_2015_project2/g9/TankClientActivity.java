@@ -161,6 +161,7 @@ public class TankClientActivity extends AppCompatActivity  {
     protected  void onDestroy() {
         game.release();
         gridAdapter.release();
+        saveRestore.reset(); // prepare db for new game
         game = null;
         gridAdapter = null;
         saveRestore = null;

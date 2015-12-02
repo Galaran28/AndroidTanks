@@ -3,6 +3,7 @@ package edu.unh.cs.cs619_2015_project2.g9.tiles;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.rest.RestService;
@@ -23,6 +24,14 @@ public class TileFactory {
     @Bean
     TileUIFactory uiFactory;
 
+    Tile base, indistructableWall;
+
+    @AfterInject
+    public void afterinject() {
+        base = new Tile(uiFactory);
+        indistructableWall = new Wall(1000, uiFactory);
+    }
+
     /**
      * Take in the integer representations of the tiles and generates the correct tile object
      *
@@ -32,10 +41,10 @@ public class TileFactory {
     public Tile createTile(int integerRepresentation) {
         Tile ret = null;
         if (integerRepresentation == 0) {
-            ret = new Tile(uiFactory);
+            ret = base;
         } else if (integerRepresentation == 1000) {
-            ret = new Wall(integerRepresentation, uiFactory);
-        } else if (integerRepresentation > 1000 && integerRepresentation <= 2000) {
+            ret = indistructableWall;
+        } else if (integerRepresentation >= 1000 && integerRepresentation <= 2000) {
             ret = new Wall(integerRepresentation, uiFactory);
         } else if  (integerRepresentation >= 2000000 && integerRepresentation <= 3000000) {
             ret = new Bullet(integerRepresentation, uiFactory);

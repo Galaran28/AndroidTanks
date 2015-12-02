@@ -28,12 +28,12 @@ import edu.unh.cs.cs619_2015_project2.g9.util.OttoBus;
 @EBean
 public class GridAdapter extends BaseAdapter {
     public static final String TAG = "GridAdaptor";
-    ArrayList<Tile> tiles;
+    ArrayList<Tile> tiles, old;
 
     @AfterInject
     public void init() {
         Log.d(TAG, "init");
-        tiles = new ArrayList<Tile>();
+        tiles = new ArrayList<>();
         bus.register(this);
     }
 

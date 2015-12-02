@@ -179,14 +179,13 @@ public class GameGrid {
     public void parseGrid(GridChange gc) {
         Log.d(TAG, "parsing grid to Tile array");
         int missiles = 0;
-        boolean foundPlayer = false;
+        playerAlive = false;
 
         // apply changes to board
        for (ElementChange e : gc.changes) {
            board[e.x][e.y] = factory.createTile(e.gridInt);
        }
 
-        // TODO refactor this shit
         // scan board and update stats
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
@@ -200,21 +199,18 @@ public class GameGrid {
                     Tank tank = (Tank) t;
                     if (tank.id == tankId) {
                         tank.setPlayer();
-                        foundPlayer = true;
-                        playerAlive = true;
                         playerDirection = tank.direction;
+                        playerAlive = true;
                     }
                 }
 
                 board[i][j] = t;
             }
         }
-        if (!foundPlayer) {
-            playerAlive = false;
+        if (!playerAlive) {
             bus.post(new BeginReplayEvent(1));
-            //  Log.e(TAG, "could not find player: " + tankId);
-            //   restClient.leave(tankId);
         }
+
         missilesFired = missiles;
         bus.post(board);
     }

@@ -1,13 +1,8 @@
 package edu.unh.cs.cs619_2015_project2.g9.rest;
 
-/**
- * Created by karenjin on 10/21/15.
- */
-
 import android.os.SystemClock;
 
 import org.androidannotations.annotations.AfterInject;
-import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
@@ -113,7 +108,7 @@ public class PollerTask {
      */
     @Subscribe
     public void suspend(BeginReplayEvent e) {
-        this.release();
+        enabled = false;
     }
 
     public void release() {
