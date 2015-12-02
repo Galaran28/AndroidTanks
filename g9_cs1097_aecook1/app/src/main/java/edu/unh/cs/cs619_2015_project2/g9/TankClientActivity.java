@@ -3,6 +3,8 @@ package edu.unh.cs.cs619_2015_project2.g9;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -15,9 +17,12 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Menu;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.Toast;
 
+
+import com.squareup.otto.Subscribe;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
@@ -58,16 +63,15 @@ public class TankClientActivity extends AppCompatActivity  {
     @Bean
     GridAdapter gridAdapter;
 
+    private MyShakeListener myShakeListener;
     @ViewById
     GridView gridview;
 
     private SensorManager mySensorManager;
     private Sensor mySensor;
-    private MyShakeListener myShakeListener;
-
-    private boolean replay = false;
     private static MediaPlayer mediaPlayer;
-
+  //  public Button exit; // = (Button) findViewById(R.id.exit);
+  //  public Button replay;// = (Button) findViewById(R.id.replay);
     @AfterViews
     public void afterViews() {
         gridview.setAdapter(gridAdapter);
@@ -84,10 +88,10 @@ public class TankClientActivity extends AppCompatActivity  {
         myShakeListener.setOnShakeListener(new MyShakeListener.OnShakeListener() {
             @Override
             public void onShake(int count) {
-                if(!replay)
-                    bus.post(new FireEvent());
+                game.fireHelper();
             }
         });
+        game.setContext(this);
      }
 
     /**
@@ -158,7 +162,7 @@ public class TankClientActivity extends AppCompatActivity  {
     }
 
     @Override
-    protected  void onDestroy() {
+    protected void onDestroy() {
         game.release();
         gridAdapter.release();
         saveRestore.reset(); // prepare db for new game
@@ -179,34 +183,81 @@ public class TankClientActivity extends AppCompatActivity  {
     @Click(R.id.left)
     void leftClicked(){
         Log.i(TAG, "leftClicked");
-        if (!replay)
-        bus.post(new MoveEvent(Tile.LEFT));
+        if(!game.gameOver())
+            game.moveHelper(Tile.LEFT);
+        else
+            showEnd();
+        //bus.post(new MoveEvent(Tile.LEFT));
     }
 
     @Click(R.id.right)
     void rightClicked(){
         Log.i(TAG, "rightClicked");
-        if (!replay)
-        bus.post(new MoveEvent(Tile.RIGHT));
+        if(!game.gameOver())
+            game.moveHelper(Tile.RIGHT);
+        else
+            showEnd();
     }
 
     @Click(R.id.up)
     void upClicked(){
         Log.i(TAG, "upClicked");
-        if (!replay)
-        bus.post(new MoveEvent(Tile.UP));
+
+        if(!game.gameOver())
+            game.moveHelper(Tile.UP);
+        else
+            showEnd();
+        //bus.post(new MoveEvent(Tile.UP));
     }
 
     @Click(R.id.down)
     void downClicked(){
         Log.i(TAG, "downClicked");
-        if (!replay)
-        bus.post(new MoveEvent(Tile.DOWN));
+        if(!game.gameOver())
+        game.moveHelper(Tile.DOWN);
+        else
+            showEnd();
+        //if (!replay)
+       // bus.post(new MoveEvent(Tile.DOWN));
     }
 
     @Click(R.id.fire)
     void fireClicked(){
-        if (!replay)
-        bus.post(new FireEvent());
+        //if (!replay)
+       // bus.post(new FireEvent());
+        if(!game.gameOver())
+        game.fireHelper();
+        else
+            showEnd();
+    }
+
+
+
+    private void showEnd()
+    {
+        final Button exit = (Button) findViewById(R.id.exit);
+        exit.setBackgroundColor(Color.RED);
+        exit.setText("Exit");
+        exit.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        final Button replay = (Button) findViewById(R.id.replay);
+        replay.setBackgroundColor(Color.GREEN);
+        replay.setText("Replay");
+        replay.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                replay.setText("");
+                exit.setText("");
+                replay.setBackgroundColor(Color.TRANSPARENT);
+                exit.setBackgroundColor(Color.TRANSPARENT);
+                replay.setEnabled(false);
+                exit.setEnabled(false);
+                bus.post(new BeginReplayEvent(1));
+            }
+        });
+
     }
 }

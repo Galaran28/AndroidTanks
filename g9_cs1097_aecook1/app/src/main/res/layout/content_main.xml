@@ -68,4 +68,24 @@
         android:layout_alignBottom="@+id/left"
         android:background="@android:color/transparent"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:id="@+id/replay"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/fire"
+        android:layout_toStartOf="@+id/fire"
+        android:background="@android:color/transparent"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:id="@+id/exit"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/fire"
+        android:layout_toEndOf="@+id/fire"
+        android:background="@android:color/transparent" />
+
 </RelativeLayout>

@@ -1,9 +1,11 @@
 package edu.unh.cs.cs619_2015_project2.g9.tiles;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.SystemClock;
 import android.support.annotation.UiThread;
 import android.util.Log;
+import android.widget.Button;
 
 import com.squareup.otto.Subscribe;
 
@@ -56,8 +58,10 @@ public class GameGrid {
     private boolean hasFired, hasMoved, hasTurned;
     private int missilesFired = 0;
     private boolean playerAlive = true;
+    private boolean gameOver = false;
     private byte playerDirection;
     private Tile[][] board;
+    private Context context;
 
     @Bean
     protected OttoBus bus;
@@ -97,6 +101,34 @@ public class GameGrid {
 
         // update board every POL_INTERVAL milliseconds
         poller.doPoll(POL_INTERVAL);
+    }
+
+
+    public void setContext(Context c)
+    {
+        context = c;
+    }
+
+
+    /**
+     * Determines if the game is over before trying to move
+     *
+     * @Author Alex Cook
+     * @param direction
+     */
+
+    public void moveHelper(byte direction){
+        if (!gameOver)
+            bus.post(new MoveEvent(direction));
+    }
+
+    /**
+     * Determines if the game is over before trying to shoot
+     * @Author Alex Cook
+     */
+    public void fireHelper(){
+        if (!gameOver)
+            bus.post(new FireEvent());
     }
 
     /**
@@ -208,7 +240,9 @@ public class GameGrid {
             }
         }
         if (!playerAlive) {
-            bus.post(new BeginReplayEvent(1));
+            playerAlive=false;
+            gameOver = true;
+            //bus.post(new BeginReplayEvent(1));
         }
 
         missilesFired = missiles;
@@ -261,8 +295,12 @@ public class GameGrid {
     public void release() {
         poller.release();
         poller = null;
-
-//        restClient.leave(tankId);
         bus.unregister(this);
     }
+
+    public boolean gameOver()
+    {
+        return gameOver;
+    }
+
 }
