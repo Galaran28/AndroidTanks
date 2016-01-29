@@ -1,4 +1,4 @@
 # AndroidTanks
 Tanks game for cs619 final project
-Alex edited this
-This has been edited again
+
+It is a simple client for a multiplayer game where players battle eachother in a shared arena.
